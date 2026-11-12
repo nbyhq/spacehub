@@ -29,18 +29,18 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('spaces.index') }}" class="card mb-space-lg grid grid-cols-1 items-end gap-space-md p-space-lg md:grid-cols-12">
+    <form method="GET" action="{{ route('spaces.index') }}" class="card mb-space-lg grid grid-cols-1 items-end gap-space-md p-space-lg md:grid-cols-2 lg:grid-cols-12">
         @if (request('type'))
             <input type="hidden" name="type" value="{{ request('type') }}">
         @endif
-        <div class="md:col-span-5">
+        <div class="md:col-span-2 lg:col-span-5">
             <label class="label" for="q">Pencarian Nama &amp; Lokasi</label>
             <div class="relative">
                 <span class="material-symbols-outlined pointer-events-none absolute left-3 top-2.5 text-[20px] text-on-surface-variant">search</span>
                 <input id="q" type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama ruang atau lokasi..." class="input pl-10">
             </div>
         </div>
-        <div class="md:col-span-4">
+        <div class="lg:col-span-4">
             <label class="label" for="capacity">Kapasitas</label>
             <select id="capacity" name="capacity" class="input">
                 <option value="">Semua kapasitas</option>
@@ -49,7 +49,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="flex gap-2 md:col-span-3">
+        <div class="flex gap-2 lg:col-span-3">
             <button class="btn-primary flex-1">
                 <span class="material-symbols-outlined text-[18px]">tune</span> Terapkan
             </button>
@@ -99,7 +99,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="mt-space-lg flex items-end justify-between gap-3">
+                    <div class="mt-space-lg flex flex-wrap items-end justify-between gap-3">
                         <div>
                             <div class="text-body-sm text-on-surface-variant">Mulai dari</div>
                             <div class="text-headline-md font-bold text-primary">

@@ -3,7 +3,7 @@
 @section('title', $space->name.' - SpaceHub')
 
 @section('content')
-    <nav class="mb-space-lg flex items-center gap-1 text-body-sm text-on-surface-variant">
+    <nav class="mb-space-lg flex flex-wrap items-center gap-1 text-body-sm text-on-surface-variant">
         <a href="{{ route('spaces.index') }}" class="hover:text-primary">Ruang</a>
         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
         <a href="{{ route('spaces.index', ['type' => $space->type]) }}" class="hover:text-primary">{{ \App\Models\Space::TYPES[$space->type] ?? $space->type }}</a>
@@ -21,6 +21,10 @@
                     {{ $space->location }}
                 </p>
             </div>
+
+            <a href="#booking-form" class="btn-primary h-12 w-full lg:hidden">
+                <span class="material-symbols-outlined text-[18px]">event_available</span> Pesan Ruang Ini
+            </a>
 
             <div class="card overflow-hidden">
                 @include('partials.space-photo', ['space' => $space, 'class' => 'aspect-video w-full'])
@@ -76,7 +80,7 @@
         </div>
 
         <aside class="space-y-space-lg lg:col-span-4">
-            <div class="card p-space-lg lg:sticky lg:top-24">
+            <div id="booking-form" class="card scroll-mt-20 p-space-lg lg:sticky lg:top-24">
                 <div class="flex items-baseline justify-between">
                     <div class="text-headline-md font-bold">
                         Rp {{ number_format($space->price_per_hour, 0, ',', '.') }}

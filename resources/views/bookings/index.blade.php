@@ -55,8 +55,8 @@
             @endphp
             <article class="card flex overflow-hidden">
                 <div class="w-1.5 shrink-0 {{ $strip[$booking->status] ?? 'bg-slate-300' }}"></div>
-                <div class="flex flex-1 flex-col gap-space-md p-space-md md:flex-row md:items-center">
-                    <div class="h-28 w-full shrink-0 overflow-hidden rounded-lg md:w-40">
+                <div class="flex flex-1 flex-col gap-space-md p-space-md lg:flex-row lg:items-center">
+                    <div class="h-28 w-full shrink-0 overflow-hidden rounded-lg lg:w-40">
                         @include('partials.space-photo', ['space' => $space, 'class' => 'h-full w-full'])
                     </div>
 
@@ -86,7 +86,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col items-start gap-2 md:items-end">
+                    <div class="flex flex-col items-start gap-2 lg:items-end">
                         <div class="text-body-sm text-on-surface-variant">Estimasi Biaya</div>
                         <div class="text-headline-md font-bold">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
                         <div class="flex flex-wrap gap-2">
