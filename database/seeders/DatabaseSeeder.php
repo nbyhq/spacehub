@@ -13,14 +13,14 @@ class DatabaseSeeder extends Seeder
     {
         $admin = new User([
             'name' => 'Admin SpaceHub',
-            'email' => 'admin@spacehub.test',
+            'email' => 'admin@spacehub.com',
             'password' => 'password',
         ]);
         $admin->forceFill(['role' => 'admin'])->save();
 
         User::create([
             'name' => 'User Contoh',
-            'email' => 'user@spacehub.test',
+            'email' => 'user@spacehub.com',
             'password' => 'password',
         ]);
 
