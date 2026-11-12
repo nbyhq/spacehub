@@ -8,15 +8,12 @@
             <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke daftar ruang
         </a>
         <h1 class="mt-2 text-headline-lg font-bold tracking-tight">Edit Ruang</h1>
+        <p class="mt-1 text-body-lg text-on-surface-variant">{{ $space->name }}</p>
     </div>
 
-    <form method="POST" action="{{ route('admin.spaces.update', $space) }}" enctype="multipart/form-data" class="card p-space-lg">
+    <form method="POST" action="{{ route('admin.spaces.update', $space) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        @include('admin.spaces._form')
-        <div class="mt-space-lg flex gap-3">
-            <button class="btn-primary">Perbarui</button>
-            <a href="{{ route('admin.spaces.index') }}" class="btn-outline">Batal</a>
-        </div>
+        @include('admin.spaces._form', ['submitLabel' => 'Simpan perubahan'])
     </form>
 @endsection

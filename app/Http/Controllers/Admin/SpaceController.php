@@ -25,7 +25,12 @@ class SpaceController extends Controller
             ->paginate(8)
             ->withQueryString();
 
-        return view('admin.spaces.index', compact('spaces'));
+        $stats = [
+            'total' => Space::count(),
+            'active' => Space::where('is_active', true)->count(),
+        ];
+
+        return view('admin.spaces.index', compact('spaces', 'stats'));
     }
 
     public function create()

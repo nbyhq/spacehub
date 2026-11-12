@@ -11,7 +11,7 @@
         <span class="font-medium text-on-surface">{{ $space->name }}</span>
     </nav>
 
-    <div class="grid gap-space-lg lg:grid-cols-12">
+    <div class="grid items-start gap-space-lg lg:grid-cols-12">
         <div class="space-y-space-lg lg:col-span-8">
             <div class="card p-space-lg">
                 @include('partials.type-chip', ['type' => $space->type])
@@ -79,8 +79,8 @@
             </div>
         </div>
 
-        <aside class="space-y-space-lg lg:col-span-4">
-            <div id="booking-form" class="card scroll-mt-20 p-space-lg lg:sticky lg:top-24">
+        <aside class="space-y-space-lg lg:sticky lg:top-24 lg:col-span-4 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pb-1">
+            <div id="booking-form" class="card scroll-mt-20 p-space-lg">
                 <div class="flex items-baseline justify-between">
                     <div class="text-headline-md font-bold">
                         Rp {{ number_format($space->price_per_hour, 0, ',', '.') }}
@@ -146,17 +146,17 @@
 
             <div class="card p-space-lg">
                 <h2 class="text-title-card font-semibold">Jadwal Terisi</h2>
-                <ul class="mt-space-md space-y-3 text-body-md">
+                <ul class="mt-space-md max-h-64 space-y-3 overflow-y-auto text-body-md">
                     @forelse ($booked as $b)
                         <li class="flex items-center justify-between gap-2">
                             <span>
-                                <span class="font-medium">{{ $b->booking_date->format('d M Y') }}</span>
+                                <span class="font-medium">{{ $b->booking_date->translatedFormat('d M Y') }}</span>
                                 <span class="text-on-surface-variant">, {{ $b->time_range }}</span>
                             </span>
                             @include('partials.status', ['status' => $b->status])
                         </li>
                     @empty
-                        <li class="text-on-surface-variant">Belum ada jadwal terisi.</li>
+                        <li class="text-on-surface-variant">Belum ada jadwal terisi. Semua waktu masih tersedia.</li>
                     @endforelse
                 </ul>
             </div>
@@ -165,13 +165,17 @@
 @endsection
 
 @push('scripts')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/id.js"></script>
     <script>
         (function () {
             var price = {{ (int) $space->price_per_hour }};
+            var dateEl = document.getElementById('booking_date');
             var start = document.getElementById('start_time');
             var end = document.getElementById('end_time');
             var box = document.getElementById('estimate-box');
-            if (!start || !end || !box) return;
+            if (!dateEl || !start || !end || !box) return;
 
             function minutes(value) {
                 var p = value.split(':');
@@ -190,8 +194,48 @@
                 box.classList.remove('hidden');
             }
 
-            start.addEventListener('input', update);
-            end.addEventListener('input', update);
+            if (window.flatpickr) {
+                flatpickr.localize(flatpickr.l10ns.id);
+
+                dateEl.placeholder = 'Pilih tanggal';
+                start.placeholder = '--:--';
+                end.placeholder = '--:--';
+
+                flatpickr(dateEl, {
+                    minDate: 'today',
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'j F Y',
+                    altInputClass: 'input',
+                    disableMobile: true
+                });
+
+                var timeOpts = {
+                    enableTime: true,
+                    noCalendar: true,
+                    time_24hr: true,
+                    dateFormat: 'H:i',
+                    altInput: true,
+                    altFormat: 'H:i',
+                    altInputClass: 'input',
+                    minuteIncrement: 15,
+                    disableMobile: true
+                };
+
+                var endPicker;
+                flatpickr(start, Object.assign({}, timeOpts, {
+                    onChange: function (d, value) {
+                        if (endPicker) endPicker.set('minTime', value || '00:00');
+                        update();
+                    }
+                }));
+                endPicker = flatpickr(end, Object.assign({}, timeOpts, { onChange: update }));
+            } else {
+                if (start.value) end.min = start.value;
+                start.addEventListener('input', update);
+                end.addEventListener('input', update);
+            }
+
             update();
         })();
     </script>
