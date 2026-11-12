@@ -1,58 +1,188 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SpaceHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web untuk booking ruang meeting dan coworking. Dibangun dengan Laravel 13, MariaDB, dan Blade + Tailwind CSS v4.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Autentikasi (login, register, logout) dengan role **admin** dan **user**
+- Katalog ruang publik: pencarian, filter tipe, pagination, dan halaman detail
+- Booking ruang dengan validasi jam dan **cek bentrok jadwal**
+- Halaman "Booking Saya": lihat riwayat dan batalkan booking
+- Panel admin:
+  - Dashboard ringkasan (total ruang, pengguna, booking hari ini, booking pending)
+  - CRUD ruang (upload foto, pilih fasilitas, soft delete)
+  - CRUD fasilitas
+  - Kelola booking (setujui, tolak, hapus, filter status)
+- Test otomatis untuk aturan booking dan hak akses
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Teknologi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3+ dan Laravel 13
+- MariaDB
+- Blade, Tailwind CSS v4, Vite
+sed -i 's/^APP_NAME=.*/APP_NAME=SpaceHub/' .env.example
+sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mariadb/' .env.example
+sed -i 's/^# DB_HOST=.*/DB_HOST=127.0.0.1/; s/^# DB_PORT=.*/DB_PORT=3306/; s/^# DB_DATABASE=.*/DB_DATABASE=spacehub/; s/^# DB_USERNAME=.*/DB_USERNAME=root/; s/^# DB_PASSWORD=.*/DB_PASSWORD=/' .env.example
+grep -q '^APP_TIMEZONE' .env.example || echo 'APP_TIMEZONE=Asia/Jakarta' >> .env.example
 
-## Learning Laravel
+cat > README.md <<'EOF'
+# SpaceHub
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Aplikasi web untuk booking ruang meeting dan coworking. Dibangun dengan Laravel 13, MariaDB, dan Blade + Tailwind CSS v4.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fitur
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Autentikasi (login, register, logout) dengan role **admin** dan **user**
+- Katalog ruang publik: pencarian, filter tipe, pagination, dan halaman detail
+- Booking ruang dengan validasi jam dan **cek bentrok jadwal**
+- Halaman "Booking Saya": lihat riwayat dan batalkan booking
+- Panel admin:
+  - Dashboard ringkasan (total ruang, pengguna, booking hari ini, booking pending)
+  - CRUD ruang (upload foto, pilih fasilitas, soft delete)
+  - CRUD fasilitas
+  - Kelola booking (setujui, tolak, hapus, filter status)
+- Test otomatis untuk aturan booking dan hak akses
 
-## Agentic Development
+## Teknologi
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- PHP 8.3+ dan Laravel 13
+- MariaDB
+- Blade, Tailwind CSS v4, Vite
+
+## Struktur Database
+
+| Tabel | Keterangan |
+| --- | --- |
+| `users` | Pengguna, kolom `role` (`admin` / `user`) |
+| `spaces` | Data ruang (tipe, kapasitas, lokasi, harga per jam, foto, soft delete) |
+| `facilities` | Daftar fasilitas |
+| `facility_space` | Pivot many-to-many ruang dan fasilitas |
+| `bookings` | Booking (pengguna, ruang, tanggal, jam mulai/selesai, status) |
+
+## Instalasi
+
+Contoh untuk Fedora. Sesuaikan nama paket dengan distro kamu.
 
 ```bash
-composer require laravel/boost --dev
+sudo dnf install mariadb-server php-cli php-mysqlnd php-mbstring php-xml php-pdo composer nodejs npm
+sudo systemctl enable --now mariadb
 
-php artisan boost:install
+git clone <url-repo-ini> spacehub && cd spacehub
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buat database dan user, lalu sesuaikan `DB_USERNAME` dan `DB_PASSWORD` di `.env`:
 
-## Contributing
+```sql
+CREATE DATABASE spacehub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'spacehub'@'localhost' IDENTIFIED BY 'ganti-password';
+GRANT ALL PRIVILEGES ON spacehub.* TO 'spacehub'@'localhost';
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Lanjutkan:
 
-## Code of Conduct
+```bash
+php artisan migrate --seed
+php artisan storage:link
+npm install
+npm run dev      # terminal 1
+php artisan serve  # terminal 2
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Buka `http://localhost:8000`.
 
-## Security Vulnerabilities
+## Akun Demo (dari seeder)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@spacehub.test` | `password` |
+| User | `user@spacehub.test` | `password` |
 
-## License
+## Menjalankan Test
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan test
+```
+
+Test memakai SQLite in-memory, jadi tidak menyentuh database MariaDB.
+
+## Rencana Pengembangan
+
+- Edit booking oleh user selama masih pending
+- Restore ruang yang sudah dihapus
+- Notifikasi email saat status booking berubah
+
+## Lisensi
+
+[MIT](https://opensource.org/licenses/MIT)
+
+## Struktur Database
+
+| Tabel | Keterangan |
+| --- | --- |
+| `users` | Pengguna, kolom `role` (`admin` / `user`) |
+| `spaces` | Data ruang (tipe, kapasitas, lokasi, harga per jam, foto, soft delete) |
+| `facilities` | Daftar fasilitas |
+| `facility_space` | Pivot many-to-many ruang dan fasilitas |
+| `bookings` | Booking (pengguna, ruang, tanggal, jam mulai/selesai, status) |
+
+## Instalasi
+
+Contoh untuk Fedora. Sesuaikan nama paket dengan distro kamu.
+
+```bash
+sudo dnf install mariadb-server php-cli php-mysqlnd php-mbstring php-xml php-pdo composer nodejs npm
+sudo systemctl enable --now mariadb
+
+git clone <url-repo-ini> spacehub && cd spacehub
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Buat database dan user, lalu sesuaikan `DB_USERNAME` dan `DB_PASSWORD` di `.env`:
+
+```sql
+CREATE DATABASE spacehub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'spacehub'@'localhost' IDENTIFIED BY 'ganti-password';
+GRANT ALL PRIVILEGES ON spacehub.* TO 'spacehub'@'localhost';
+```
+
+Lanjutkan:
+
+```bash
+php artisan migrate --seed
+php artisan storage:link
+npm install
+npm run dev      # terminal 1
+php artisan serve  # terminal 2
+```
+
+Buka `http://localhost:8000`.
+
+## Akun Demo (dari seeder)
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@spacehub.test` | `password` |
+| User | `user@spacehub.test` | `password` |
+
+## Menjalankan Test
+
+```bash
+php artisan test
+```
+
+Test memakai SQLite in-memory, jadi tidak menyentuh database MariaDB.
+
+## Rencana Pengembangan
+
+- Edit booking oleh user selama masih pending
+- Restore ruang yang sudah dihapus
+- Notifikasi email saat status booking berubah
+
+## Lisensi
+
+[MIT](https://opensource.org/licenses/MIT)
