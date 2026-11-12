@@ -9,7 +9,7 @@
             <h1 class="text-headline-lg font-bold tracking-tight md:text-headline-xl">Kelola Ruang Kerja</h1>
             <p class="mt-1 max-w-2xl text-body-lg text-on-surface-variant">Atur data ruang, tarif, fasilitas, dan status ketersediaan.</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.facilities.index') }}" class="btn-outline">Kelola Fasilitas</a>
             <a href="{{ route('admin.spaces.create') }}" class="btn-primary">
                 <span class="material-symbols-outlined text-[18px]">add</span> Tambah Ruang Baru
@@ -40,7 +40,51 @@
             </a>
         </form>
 
-        <div class="overflow-x-auto">
+        <div class="divide-y divide-outline-variant/30 lg:hidden">
+            @forelse ($spaces as $space)
+                <div class="space-y-3 p-space-md">
+                    <div class="flex items-start gap-3">
+                        <div class="size-14 shrink-0 overflow-hidden rounded-lg">
+                            @include('partials.space-photo', ['space' => $space, 'class' => 'size-14'])
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="font-semibold">{{ $space->name }}</div>
+                            <div class="text-body-sm text-on-surface-variant">{{ $space->location }}</div>
+                        </div>
+                        @include('partials.active', ['active' => $space->is_active])
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-body-md">
+                        @include('partials.type-chip', ['type' => $space->type])
+                        <span>{{ $space->capacity }} Orang</span>
+                        <span class="font-medium">Rp {{ number_format($space->price_per_hour, 0, ',', '.') }} <span class="text-body-sm font-normal text-on-surface-variant">/ jam</span></span>
+                    </div>
+                    @if ($space->facilities->isNotEmpty())
+                        <div class="flex flex-wrap gap-1">
+                            @foreach ($space->facilities->take(3) as $facility)
+                                <span class="chip-sm">{{ $facility->name }}</span>
+                            @endforeach
+                            @if ($space->facilities->count() > 3)
+                                <span class="chip-sm">+{{ $space->facilities->count() - 3 }}</span>
+                            @endif
+                        </div>
+                    @endif
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="{{ route('admin.spaces.edit', $space) }}" class="rounded-lg bg-surface-container px-3 py-1.5 text-label-md font-medium hover:bg-surface-container-high">Edit</a>
+                        <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="rounded-lg bg-primary px-3 py-1.5 text-label-md font-medium text-white hover:bg-primary-container">Kelola Jadwal</a>
+                        <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')" class="ml-auto">
+                            @csrf @method('DELETE')
+                            <button class="rounded-lg px-2 py-1.5 text-red-700 hover:bg-red-50" title="Hapus">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="py-12 text-center text-on-surface-variant">Belum ada ruang yang cocok.</div>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto lg:block">
             <table class="w-full min-w-[860px] text-body-md">
                 <thead class="bg-surface-container-low">
                     <tr>

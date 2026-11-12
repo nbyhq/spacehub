@@ -18,11 +18,11 @@
             @endif
         </div>
 
-        <form method="GET" action="{{ route('admin.bookings.index') }}" class="flex gap-2">
+        <form method="GET" action="{{ route('admin.bookings.index') }}" class="flex w-full gap-2 md:w-auto">
             @if ($filterSpace)
                 <input type="hidden" name="space" value="{{ $filterSpace->id }}">
             @endif
-            <select name="status" class="input w-44">
+            <select name="status" class="input min-w-0 flex-1 md:w-44 md:flex-none">
                 <option value="">Semua Status</option>
                 @foreach (['pending' => 'Menunggu', 'approved' => 'Disetujui', 'cancelled' => 'Dibatalkan'] as $value => $label)
                     <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
@@ -33,7 +33,51 @@
     </div>
 
     <div class="card overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="divide-y divide-outline-variant/30 lg:hidden">
+            @forelse ($bookings as $booking)
+                <div class="space-y-3 p-space-md">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="font-mono text-label-sm font-semibold text-primary">{{ $booking->code }}</div>
+                            <div class="font-medium">{{ $booking->space->name }}</div>
+                        </div>
+                        @include('partials.status', ['status' => $booking->status])
+                    </div>
+                    <div class="text-body-sm text-on-surface-variant">
+                        <div class="font-medium text-on-surface">{{ $booking->user->name }}</div>
+                        <div class="break-all">{{ $booking->user->email }}</div>
+                    </div>
+                    <div class="text-body-md">
+                        {{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }}
+                        <div class="text-body-sm text-on-surface-variant">{{ $booking->duration_label }} • Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        @if ($booking->status === 'pending')
+                            <form method="POST" action="{{ route('admin.bookings.update', $booking) }}">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="status" value="approved">
+                                <button class="btn-success h-9 px-4">Setujui</button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.bookings.update', $booking) }}">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="status" value="cancelled">
+                                <button class="btn-danger h-9 px-4">Tolak</button>
+                            </form>
+                        @endif
+                        <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" onsubmit="return confirm('Hapus booking ini?')" class="ml-auto">
+                            @csrf @method('DELETE')
+                            <button class="rounded-lg px-2 py-1.5 text-red-700 hover:bg-red-50" title="Hapus">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="py-12 text-center text-on-surface-variant">Belum ada booking.</div>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto lg:block">
             <table class="w-full min-w-[820px] text-body-md">
                 <thead class="bg-surface-container-low">
                     <tr>
