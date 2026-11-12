@@ -45,5 +45,11 @@ class DatabaseSeeder extends Seeder
             ]);
             $space->facilities()->attach($facilities->random(3)->pluck('id'));
         }
+
+        $this->call([
+            SpaceSeeder::class,
+            SpacePhotoSeeder::class,
+            BookingDemoSeeder::class,
+        ]);
     }
 }
