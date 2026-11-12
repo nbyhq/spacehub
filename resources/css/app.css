@@ -142,3 +142,10 @@
         @apply inline-flex items-center gap-1 rounded bg-surface-container-low px-2 py-1 text-body-sm text-on-surface-variant;
     }
 }
+
+/* Cegah zoom otomatis Safari iOS saat fokus ke input */
+@media (max-width: 767px) {
+    input.input, select.input, textarea.input {
+        font-size: 16px;
+    }
+}

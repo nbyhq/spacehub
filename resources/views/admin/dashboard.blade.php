@@ -66,7 +66,7 @@
     </div>
 
     <section class="card mt-space-lg p-space-lg">
-        <div class="mb-space-md flex items-center justify-between border-b border-outline-variant/40 pb-space-md">
+        <div class="mb-space-md flex flex-wrap items-center justify-between gap-2 border-b border-outline-variant/40 pb-space-md">
             <h2 class="flex items-center gap-2 text-title-card font-semibold">
                 <span class="size-2.5 rounded-full bg-amber-600"></span>
                 Permohonan Reservasi Terbaru
@@ -80,17 +80,17 @@
         <div class="grid gap-space-md lg:grid-cols-2">
             @forelse ($pending as $booking)
                 <div class="rounded-xl border border-outline-variant/40 bg-surface-container-low/50 p-space-md">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="flex min-w-0 items-center gap-3">
                             <span class="flex size-11 items-center justify-center rounded-full bg-primary-fixed text-label-md font-semibold text-on-primary-fixed">
                                 {{ mb_strtoupper(mb_substr($booking->user->name, 0, 1)) }}
                             </span>
                             <div>
-                                <div class="flex items-center gap-2">
+                                <div class="flex flex-wrap items-center gap-2">
                                     <span class="font-semibold">{{ $booking->user->name }}</span>
                                     @include('partials.status', ['status' => $booking->status])
                                 </div>
-                                <div class="text-body-sm text-on-surface-variant">{{ $booking->code }} • {{ $booking->user->email }}</div>
+                                <div class="break-all text-body-sm text-on-surface-variant">{{ $booking->code }} • {{ $booking->user->email }}</div>
                             </div>
                         </div>
                         <div class="text-title-card font-bold text-primary">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
@@ -106,7 +106,7 @@
                         </span>
                     </div>
 
-                    <div class="mt-space-md flex justify-end gap-2">
+                    <div class="mt-space-md flex flex-wrap justify-end gap-2">
                         <form method="POST" action="{{ route('admin.bookings.update', $booking) }}">
                             @csrf @method('PATCH')
                             <input type="hidden" name="status" value="cancelled">
@@ -137,7 +137,7 @@
             <h2 class="text-title-card font-semibold">Aktivitas Booking Terbaru</h2>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full text-body-md">
+            <table class="w-full min-w-[560px] text-body-md">
                 <thead class="bg-surface-container-low">
                     <tr>
                         <th class="th">Pemesan</th>
