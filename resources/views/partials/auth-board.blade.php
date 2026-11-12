@@ -10,21 +10,38 @@
         ['Coworking', [[1, 'free'], [3, 'taken'], [2, 'free']]],
         ['Aula', [[3, 'free'], [3, 'taken']]],
     ];
+    $points = $points ?? [];
 @endphp
 
-<div class="relative hidden flex-col overflow-hidden bg-primary p-10 text-white lg:flex">
+<div class="relative isolate hidden flex-col overflow-hidden bg-gradient-to-br from-primary via-primary-container to-violet-600 p-10 text-white lg:flex">
+    <div aria-hidden="true" class="pointer-events-none absolute -right-20 -top-20 -z-10 size-72 rounded-full bg-white/10 blur-3xl"></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -left-24 top-1/2 -z-10 size-64 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div>
+
     <a href="{{ route('home') }}" class="flex w-fit items-center gap-2 text-title-card font-bold">
-        <span class="flex size-8 items-center justify-center rounded-lg bg-white/15">
+        <span class="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
             <span class="material-symbols-outlined text-[20px]">domain</span>
         </span>
         SpaceHub
     </a>
 
-    <h2 class="mt-space-xl max-w-sm text-headline-lg font-bold tracking-tight text-balance">{{ $title }}</h2>
+    <h2 class="mt-space-xl max-w-sm text-headline-lg font-bold leading-tight tracking-tight text-balance">{{ $title }}</h2>
     <p class="mt-space-sm max-w-sm text-body-lg text-on-primary-container">{{ $text }}</p>
 
+    @if (count($points))
+        <ul class="mt-space-lg space-y-2.5">
+            @foreach ($points as $point)
+                <li class="flex items-center gap-2.5 text-body-md">
+                    <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/20">
+                        <span class="material-symbols-outlined text-[14px]">check</span>
+                    </span>
+                    {{ $point }}
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
     <div aria-hidden="true" class="-mb-10 -mr-10 mt-auto pt-space-xl">
-        <div class="rounded-tl-2xl bg-surface-container-lowest p-5 pb-16 pr-14 text-on-surface">
+        <div class="rounded-tl-2xl bg-surface-container-lowest p-5 pb-16 pr-14 text-on-surface shadow-2xl">
             <div class="mb-space-md flex items-baseline justify-between gap-3">
                 <span class="text-label-md font-semibold">Jadwal ruang hari ini</span>
                 <span class="text-body-sm text-on-surface-variant">{{ now()->translatedFormat('l, j M') }}</span>
