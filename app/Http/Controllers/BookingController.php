@@ -41,6 +41,8 @@ class BookingController extends Controller
 
     public function store(Request $request, Space $space)
     {
+        abort_if(auth()->user()?->role === 'admin', 403, 'Admin tidak dapat membuat booking.');
+
         abort_unless($space->is_active, 404);
 
         $data = $request->validate([

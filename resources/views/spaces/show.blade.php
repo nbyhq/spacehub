@@ -92,7 +92,7 @@
                     Booking ditinjau admin sebelum disetujui
                 </p>
 
-                @auth
+                @if (auth()->check() && auth()->user()->role !== 'admin')
                     <form method="POST" action="{{ route('bookings.store', $space) }}" class="mt-space-lg space-y-4">
                         @csrf
                         <div>
@@ -136,12 +136,17 @@
                             Kirim Booking <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                         </button>
                     </form>
+                @elseif (auth()->check())
+                    <div class="mt-space-lg rounded-lg bg-surface-container-low p-4 text-body-md text-on-surface-variant">
+                        Akun admin tidak dapat membuat booking. Kelola booking lewat
+                        <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="font-medium text-primary hover:underline">panel admin</a>.
+                    </div>
                 @else
                     <div class="mt-space-lg rounded-lg bg-surface-container-low p-4 text-body-md text-on-surface-variant">
                         Silakan <a href="{{ route('login') }}" class="font-medium text-primary hover:underline">masuk</a>
                         atau <a href="{{ route('register') }}" class="font-medium text-primary hover:underline">daftar</a> untuk melakukan booking.
                     </div>
-                @endauth
+                @endif
             </div>
 
             <div class="card p-space-lg">
