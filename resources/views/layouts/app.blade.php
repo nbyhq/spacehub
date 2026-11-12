@@ -30,6 +30,11 @@
                 <a href="{{ route('spaces.index') }}" class="{{ $navClass(request()->routeIs('spaces.*')) }}">Ruang</a>
                 @auth
                     <a href="{{ route('bookings.index') }}" class="{{ $navClass(request()->routeIs('bookings.*')) }}">Booking Saya</a>
+                    @can('admin')
+                        <a href="{{ route('admin.dashboard') }}" class="{{ $navClass(request()->routeIs('admin.*')) }} flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span> Panel Admin
+                        </a>
+                    @endcan
                 @endauth
             </nav>
         </div>
@@ -64,6 +69,11 @@
         <a href="{{ route('spaces.index') }}" class="{{ $navClass(request()->routeIs('spaces.*')) }}">Ruang</a>
         @auth
             <a href="{{ route('bookings.index') }}" class="{{ $navClass(request()->routeIs('bookings.*')) }}">Booking Saya</a>
+                    @can('admin')
+                        <a href="{{ route('admin.dashboard') }}" class="{{ $navClass(request()->routeIs('admin.*')) }} flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span> Panel Admin
+                        </a>
+                    @endcan
         @endauth
     </nav>
 </header>
