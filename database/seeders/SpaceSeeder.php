@@ -8,6 +8,14 @@ use Illuminate\Database\Seeder;
 
 class SpaceSeeder extends Seeder
 {
+    /** Tarif rata per jam untuk setiap tipe ruang. */
+    private const PRICES = [
+        'meeting_room' => 700000,
+        'event_hall' => 1000000,
+        'private_office' => 650000,
+        'coworking' => 500000,
+    ];
+
     public function run(): void
     {
         $facilities = collect(['WiFi', 'AC', 'Proyektor', 'Whiteboard', 'Kopi Gratis', 'Parkir'])
@@ -58,6 +66,10 @@ class SpaceSeeder extends Seeder
             $space->facilities()->syncWithoutDetaching(
                 $facilities->only($byType[$type])->pluck('id')->values()->all()
             );
+        }
+
+        foreach (self::PRICES as $type => $price) {
+            Space::withTrashed()->where('type', $type)->update(['price_per_hour' => $price]);
         }
 
         $this->command?->info('SpaceSeeder: '.count($spaces).' ruang siap.');
