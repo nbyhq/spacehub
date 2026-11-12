@@ -103,8 +103,8 @@ Buka `http://localhost:8000`.
 
 | Role  | Email                 | Password   |
 | ----- | --------------------- | ---------- |
-| Admin | `admin@spacehub.test` | `password` |
-| User  | `user@spacehub.test`  | `password` |
+| Admin | `admin@spacehub.com` | `password` |
+| User  | `user@spacehub.com`  | `password` |
 
 > Ganti atau hapus akun demo sebelum aplikasi dibuka ke publik.
 
