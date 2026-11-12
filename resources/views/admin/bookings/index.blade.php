@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Kelola Booking - SpaceHub')
 
@@ -48,7 +48,7 @@
                         <div class="break-all">{{ $booking->user->email }}</div>
                     </div>
                     <div class="text-body-md">
-                        {{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }}
+                        {{ $booking->booking_date->translatedFormat('d M Y') }}, {{ $booking->time_range }}
                         <div class="text-body-sm text-on-surface-variant">{{ $booking->duration_label }} • Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
@@ -99,7 +99,7 @@
                             </td>
                             <td class="td font-medium">{{ $booking->space->name }}</td>
                             <td class="td">
-                                {{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }}
+                                {{ $booking->booking_date->translatedFormat('d M Y') }}, {{ $booking->time_range }}
                                 <div class="text-body-sm text-on-surface-variant">{{ $booking->duration_label }} • Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
                             </td>
                             <td class="td">@include('partials.status', ['status' => $booking->status])</td>

@@ -1,3 +1,6 @@
+@if (auth()->check() && auth()->user()->can('admin'))
+    @include('layouts.admin')
+@else
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -133,3 +136,4 @@
 @stack('scripts')
 </body>
 </html>
+@endif

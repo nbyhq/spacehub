@@ -1,18 +1,17 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Dashboard Admin - SpaceHub')
 
 @section('content')
     <div class="mb-space-lg flex flex-col justify-between gap-space-md md:flex-row md:items-end">
         <div>
-            <span class="text-label-sm font-semibold uppercase tracking-wide text-primary">Workspace Management</span>
-            <h1 class="text-headline-lg font-bold tracking-tight md:text-headline-xl">Dashboard Admin</h1>
+            <span class="text-label-sm font-semibold uppercase tracking-wide text-primary">{{ now()->translatedFormat('l, j F Y') }}</span>
+            <h1 class="text-headline-lg font-bold tracking-tight md:text-headline-xl">Halo, {{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}</h1>
             <p class="mt-1 max-w-2xl text-body-lg text-on-surface-variant">
                 Pantau ketersediaan ruang dan permohonan reservasi yang masuk. {{ $userCount }} pengguna terdaftar.
             </p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.spaces.index') }}" class="btn-outline">Kelola Ruang</a>
             <a href="{{ route('admin.spaces.create') }}" class="btn-primary">
                 <span class="material-symbols-outlined text-[18px]">add</span> Tambah Ruang Baru
             </a>
@@ -102,7 +101,7 @@
                         </span>
                         <span class="flex items-center gap-1.5 text-on-surface-variant">
                             <span class="material-symbols-outlined text-[18px]">schedule</span>
-                            {{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }} ({{ $booking->duration_label }})
+                            {{ $booking->booking_date->translatedFormat('d M Y') }}, {{ $booking->time_range }} ({{ $booking->duration_label }})
                         </span>
                     </div>
 
@@ -151,7 +150,7 @@
                         <tr>
                             <td class="td">{{ $booking->user->name }}</td>
                             <td class="td font-medium">{{ $booking->space->name }}</td>
-                            <td class="td">{{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }}</td>
+                            <td class="td">{{ $booking->booking_date->translatedFormat('d M Y') }}, {{ $booking->time_range }}</td>
                             <td class="td">@include('partials.status', ['status' => $booking->status])</td>
                         </tr>
                     @empty
