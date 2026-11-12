@@ -42,10 +42,12 @@
         <div class="flex items-center gap-3 text-label-md">
             @auth
                 <div class="flex items-center gap-2">
-                    <span class="flex size-8 items-center justify-center rounded-full bg-primary-fixed text-label-sm font-semibold text-on-primary-fixed">
-                        {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
-                    </span>
-                    <span class="hidden sm:inline">{{ auth()->user()->name }}</span>
+                    <a href="{{ route('profile.edit') }}" title="Profil saya" class="flex items-center gap-2 rounded-lg transition-colors hover:text-primary">
+                        <span class="flex size-8 items-center justify-center rounded-full bg-primary-fixed text-label-sm font-semibold text-on-primary-fixed">
+                            {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
+                        </span>
+                        <span class="hidden sm:inline">{{ auth()->user()->name }}</span>
+                    </a>
                     @can('admin')
                         <span class="rounded-full bg-primary-fixed px-2 py-0.5 text-label-sm font-semibold text-on-primary-fixed">Admin</span>
                     @endcan

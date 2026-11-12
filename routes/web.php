@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\SpaceController as AdminSpaceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::post('/spaces/{space}/bookings', [BookingController::class, 'store'])->name('bookings.store');
     Route::patch('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
