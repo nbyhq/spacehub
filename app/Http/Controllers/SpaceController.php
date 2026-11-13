@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Space;
+use App\Support\AvailabilityGrid;
 use Illuminate\Http\Request;
 
 class SpaceController extends Controller
@@ -45,18 +46,44 @@ class SpaceController extends Controller
         return view('spaces.index', compact('spaces', 'typeCounts', 'totalActive'));
     }
 
-    public function show(Space $space)
+    public function show(Request $request, Space $space)
     {
         abort_unless($space->is_active, 404);
         $space->load('facilities');
 
-        $booked = $space->bookings()
-            ->whereIn('status', ['pending', 'approved'])
-            ->whereDate('booking_date', '>=', today())
-            ->orderBy('booking_date')
+        // Kalender menampilkan 14 hari ke depan. Tanggal di luar rentang atau tidak valid jatuh ke hari ini.
+        $days = collect(range(0, 13))->map(fn ($i) => today()->addDays($i));
+        $requested = (string) ($request->query('date') ?: $request->old('booking_date', ''));
+        $date = $days->first(fn ($day) => $day->toDateString() === $requested) ?? $days->first();
+
+        $activeStatuses = ['pending', 'approved'];
+
+        $dayBookings = $space->bookings()
+            ->whereDate('booking_date', $date->toDateString())
+            ->whereIn('status', $activeStatuses)
             ->orderBy('start_time')
             ->get();
 
-        return view('spaces.show', compact('space', 'booked'));
+        $slots = AvailabilityGrid::build(
+            AvailabilityGrid::toMinutes($space->opensAtLabel()),
+            AvailabilityGrid::toMinutes($space->closesAtLabel()),
+            $dayBookings->map(fn ($b) => [
+                AvailabilityGrid::toMinutes($b->start_time),
+                AvailabilityGrid::toMinutes($b->end_time),
+                $b->status,
+            ])->all(),
+            $date->isToday() ? now()->hour * 60 + now()->minute : null,
+        );
+
+        // Jumlah booking per tanggal, untuk penanda titik di pemilih tanggal
+        $dayCounts = $space->bookings()
+            ->whereDate('booking_date', '>=', $days->first()->toDateString())
+            ->whereDate('booking_date', '<=', $days->last()->toDateString())
+            ->whereIn('status', $activeStatuses)
+            ->get(['booking_date'])
+            ->groupBy(fn ($b) => $b->booking_date->toDateString())
+            ->map->count();
+
+        return view('spaces.show', compact('space', 'days', 'date', 'slots', 'dayCounts'));
     }
 }

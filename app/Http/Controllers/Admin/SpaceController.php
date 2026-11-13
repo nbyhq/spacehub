@@ -45,6 +45,7 @@ class SpaceController extends Controller
         $data = $request->validate($this->rules());
         $facilityIds = $data['facilities'] ?? [];
         unset($data['facilities']);
+        $data = $this->withHours($data);
 
         $data['is_active'] = $request->boolean('is_active');
         if ($request->hasFile('photo')) {
@@ -70,6 +71,7 @@ class SpaceController extends Controller
         $data = $request->validate($this->rules());
         $facilityIds = $data['facilities'] ?? [];
         unset($data['facilities']);
+        $data = $this->withHours($data);
 
         $data['is_active'] = $request->boolean('is_active');
         if ($request->hasFile('photo')) {
@@ -92,6 +94,25 @@ class SpaceController extends Controller
         return redirect()->route('admin.spaces.index')->with('success', 'Ruang berhasil dihapus.');
     }
 
+    /** Jam diisi admin dalam satuan jam, disimpan dalam menit. Kolom yang kosong dibiarkan memakai nilai lama atau bawaan. */
+    private function withHours(array $data): array
+    {
+        foreach (['min_hours' => 'min_duration_minutes', 'max_hours' => 'max_duration_minutes'] as $from => $to) {
+            if (isset($data[$from])) {
+                $data[$to] = (int) round($data[$from] * 60);
+            }
+            unset($data[$from]);
+        }
+
+        foreach (['opens_at', 'closes_at'] as $key) {
+            if (($data[$key] ?? null) === null) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
+    }
+
     private function rules(): array
     {
         return [
@@ -102,6 +123,10 @@ class SpaceController extends Controller
             'price_per_hour' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
             'photo' => ['nullable', 'image', 'max:2048'],
+            'opens_at' => ['nullable', 'date_format:H:i'],
+            'closes_at' => ['nullable', 'date_format:H:i', 'after:opens_at'],
+            'min_hours' => ['nullable', 'numeric', 'min:0.5', 'max:24'],
+            'max_hours' => ['nullable', 'numeric', 'gte:min_hours', 'max:24'],
             'facilities' => ['nullable', 'array'],
             'facilities.*' => ['exists:facilities,id'],
         ];

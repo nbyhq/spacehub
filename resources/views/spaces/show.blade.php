@@ -59,6 +59,8 @@
                 </div>
             </div>
 
+            @include('spaces._availability')
+
             <div class="card p-space-lg">
                 <div class="flex items-center justify-between">
                     <h2 class="text-headline-md font-semibold">Fasilitas Termasuk</h2>
@@ -91,6 +93,10 @@
                     <span class="material-symbols-outlined text-[16px]">pending_actions</span>
                     Booking ditinjau admin sebelum disetujui
                 </p>
+                <p class="mt-1 flex items-center gap-1 text-body-sm text-on-surface-variant">
+                    <span class="material-symbols-outlined text-[16px]">schedule</span>
+                    Buka {{ $space->opensAtLabel() }}–{{ $space->closesAtLabel() }}, durasi {{ \App\Models\Space::durationLabel($space->minDurationMinutes()) }}–{{ \App\Models\Space::durationLabel($space->maxDurationMinutes()) }}
+                </p>
 
                 @if (auth()->check() && auth()->user()->role !== 'admin')
                     <form method="POST" action="{{ route('bookings.store', $space) }}" class="mt-space-lg space-y-4">
@@ -103,11 +109,11 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="label" for="start_time">Jam Mulai</label>
-                                <input id="start_time" type="time" name="start_time" value="{{ old('start_time') }}" required class="input">
+                                <input id="start_time" type="time" name="start_time" min="{{ $space->opensAtLabel() }}" max="{{ $space->closesAtLabel() }}" value="{{ old('start_time') }}" required class="input">
                             </div>
                             <div>
                                 <label class="label" for="end_time">Jam Selesai</label>
-                                <input id="end_time" type="time" name="end_time" value="{{ old('end_time') }}" required class="input">
+                                <input id="end_time" type="time" name="end_time" min="{{ $space->opensAtLabel() }}" max="{{ $space->closesAtLabel() }}" value="{{ old('end_time') }}" required class="input">
                             </div>
                         </div>
                         @error('start_time')
@@ -147,23 +153,6 @@
                         atau <a href="{{ route('register') }}" class="font-medium text-primary hover:underline">daftar</a> untuk melakukan booking.
                     </div>
                 @endif
-            </div>
-
-            <div class="card p-space-lg">
-                <h2 class="text-title-card font-semibold">Jadwal Terisi</h2>
-                <ul class="mt-space-md max-h-64 space-y-3 overflow-y-auto text-body-md">
-                    @forelse ($booked as $b)
-                        <li class="flex items-center justify-between gap-2">
-                            <span>
-                                <span class="font-medium">{{ $b->booking_date->translatedFormat('d M Y') }}</span>
-                                <span class="text-on-surface-variant">, {{ $b->time_range }}</span>
-                            </span>
-                            @include('partials.status', ['status' => $b->status])
-                        </li>
-                    @empty
-                        <li class="text-on-surface-variant">Belum ada jadwal terisi. Semua waktu masih tersedia.</li>
-                    @endforelse
-                </ul>
             </div>
         </aside>
     </div>
@@ -224,13 +213,15 @@
                     altFormat: 'H:i',
                     altInputClass: 'input',
                     minuteIncrement: 15,
+                    minTime: '{{ $space->opensAtLabel() }}',
+                    maxTime: '{{ $space->closesAtLabel() }}',
                     disableMobile: true
                 };
 
                 var endPicker;
                 flatpickr(start, Object.assign({}, timeOpts, {
                     onChange: function (d, value) {
-                        if (endPicker) endPicker.set('minTime', value || '00:00');
+                        if (endPicker) endPicker.set('minTime', value || '{{ $space->opensAtLabel() }}');
                         update();
                     }
                 }));

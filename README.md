@@ -27,6 +27,8 @@ SpaceHub memudahkan pengguna menelusuri ruang, mengecek jadwal yang masih kosong
 - Katalog ruang: pencarian, filter tipe, pagination, dan halaman detail
 - Booking dengan date dan time picker berbahasa Indonesia serta estimasi biaya langsung
 - Validasi jam dan **cek bentrok jadwal** (booking berurutan tetap diizinkan)
+- **Jam operasional** dan batas durasi (minimal dan maksimal) per ruang, diatur admin
+- **Kalender ketersediaan** per hari di halaman detail ruang; klik jam kosong untuk mengisi formulir booking
 - Halaman "Booking Saya": riwayat dan pembatalan
 - Profil: ubah nama, email, dan password
 

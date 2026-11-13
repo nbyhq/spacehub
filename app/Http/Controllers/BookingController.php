@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Space;
+use App\Support\AvailabilityGrid;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -51,6 +52,29 @@ class BookingController extends Controller
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
+
+        $opens = $space->opensAtLabel();
+        $closes = $space->closesAtLabel();
+
+        if ($data['start_time'] < $opens || $data['end_time'] > $closes) {
+            return back()
+                ->withErrors(['start_time' => "Ruang ini buka pukul {$opens}–{$closes}."])
+                ->withInput();
+        }
+
+        $minutes = AvailabilityGrid::toMinutes($data['end_time']) - AvailabilityGrid::toMinutes($data['start_time']);
+
+        if ($minutes < $space->minDurationMinutes()) {
+            return back()
+                ->withErrors(['end_time' => 'Durasi minimal '.Space::durationLabel($space->minDurationMinutes()).'.'])
+                ->withInput();
+        }
+
+        if ($minutes > $space->maxDurationMinutes()) {
+            return back()
+                ->withErrors(['end_time' => 'Durasi maksimal '.Space::durationLabel($space->maxDurationMinutes()).'.'])
+                ->withInput();
+        }
 
         if ($data['booking_date'] === today()->toDateString() && $data['start_time'] <= now()->format('H:i')) {
             return back()->withErrors(['start_time' => 'Jam mulai sudah lewat.'])->withInput();

@@ -64,6 +64,42 @@
             </div>
         </section>
 
+        <section class="card space-y-4 p-space-lg">
+            <div>
+                <h2 class="text-title-card font-semibold">Jam operasional</h2>
+                <p class="mt-1 text-body-md text-on-surface-variant">Booking hanya diterima di dalam jam buka dan sesuai batas durasi.</p>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="label" for="opens_at">Jam buka</label>
+                    <input id="opens_at" type="time" name="opens_at" value="{{ old('opens_at', isset($space) ? $space->opensAtLabel() : '08:00') }}" required class="input">
+                    @error('opens_at')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="label" for="closes_at">Jam tutup</label>
+                    <input id="closes_at" type="time" name="closes_at" value="{{ old('closes_at', isset($space) ? $space->closesAtLabel() : '22:00') }}" required class="input">
+                    @error('closes_at')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="label" for="min_hours">Durasi minimal</label>
+                    <div class="relative">
+                        <input id="min_hours" type="number" name="min_hours" min="0.5" max="24" step="0.5" value="{{ old('min_hours', isset($space) ? $space->minDurationMinutes() / 60 : 1) }}" required class="input pr-14">
+                        <span class="pointer-events-none absolute right-3 top-2.5 text-body-sm text-on-surface-variant">jam</span>
+                    </div>
+                    @error('min_hours')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="label" for="max_hours">Durasi maksimal</label>
+                    <div class="relative">
+                        <input id="max_hours" type="number" name="max_hours" min="0.5" max="24" step="0.5" value="{{ old('max_hours', isset($space) ? $space->maxDurationMinutes() / 60 : 8) }}" required class="input pr-14">
+                        <span class="pointer-events-none absolute right-3 top-2.5 text-body-sm text-on-surface-variant">jam</span>
+                    </div>
+                    @error('max_hours')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+            </div>
+        </section>
+
         <section class="card p-space-lg">
             <div class="flex items-center justify-between gap-3">
                 <h2 class="text-title-card font-semibold">Fasilitas</h2>
