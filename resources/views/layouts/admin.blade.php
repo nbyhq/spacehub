@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin - SpaceHub')</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,9 +30,7 @@
     <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col bg-slate-900 text-slate-300 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:self-start">
         <div class="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 text-title-card font-bold text-white">
-                <span class="flex size-8 items-center justify-center rounded-lg bg-primary-container">
-                    <span class="material-symbols-outlined text-[20px]">domain</span>
-                </span>
+                <img src="{{ asset('images/logo-white.png') }}" alt="" class="size-9 shrink-0">
                 SpaceHub
             </a>
             <span class="rounded bg-white/10 px-2 py-0.5 text-label-sm font-semibold uppercase tracking-wide text-indigo-200">Admin</span>

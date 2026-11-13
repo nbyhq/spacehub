@@ -17,9 +17,7 @@
         <div class="flex flex-col justify-center p-6 sm:p-10">
             <div class="mx-auto w-full max-w-md">
                 <a href="{{ route('home') }}" class="mb-space-lg flex w-fit items-center gap-2 text-title-card font-bold text-primary lg:hidden">
-                    <span class="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
-                        <span class="material-symbols-outlined text-[20px]">domain</span>
-                    </span>
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="size-9 shrink-0">
                     SpaceHub
                 </a>
 

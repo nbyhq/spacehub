@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'SpaceHub')</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,9 +26,7 @@
     <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div class="flex items-center gap-6">
             <a href="{{ route('home') }}" class="flex items-center gap-2 text-title-card font-bold text-primary">
-                <span class="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
-                    <span class="material-symbols-outlined text-[20px]">domain</span>
-                </span>
+                <img src="{{ asset('images/logo.png') }}" alt="" class="size-9 shrink-0">
                 SpaceHub
             </a>
             <nav class="hidden items-center gap-1 md:flex">

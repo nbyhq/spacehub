@@ -18,9 +18,7 @@
     <div aria-hidden="true" class="pointer-events-none absolute -left-24 top-1/2 -z-10 size-64 rounded-full bg-secondary-fixed-dim/20 blur-3xl"></div>
 
     <a href="{{ route('home') }}" class="flex w-fit items-center gap-2 text-title-card font-bold">
-        <span class="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
-            <span class="material-symbols-outlined text-[20px]">domain</span>
-        </span>
+        <img src="{{ asset('images/logo-white.png') }}" alt="" class="size-10 shrink-0">
         SpaceHub
     </a>
 
