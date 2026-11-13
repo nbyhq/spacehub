@@ -55,49 +55,66 @@
             @endphp
             <article class="card flex overflow-hidden">
                 <div class="w-1.5 shrink-0 {{ $strip[$booking->status] ?? 'bg-slate-300' }}"></div>
-                <div class="flex flex-1 flex-col gap-space-md p-space-md lg:flex-row lg:items-center">
-                    <div class="h-28 w-full shrink-0 overflow-hidden rounded-lg lg:w-40">
+
+                {{-- Lebar tiap zona dikunci supaya semua kartu sejajar: foto | info (fleksibel) | harga & aksi --}}
+                <div class="grid min-w-0 flex-1 gap-space-md p-space-md lg:grid-cols-[10rem_minmax(0,1fr)_15rem] lg:items-center lg:gap-space-lg">
+                    <div class="h-40 w-full overflow-hidden rounded-lg lg:h-28 lg:w-40">
                         @include('partials.space-photo', ['space' => $space, 'class' => 'h-full w-full'])
                     </div>
 
-                    <div class="flex-1">
+                    <div class="min-w-0">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="font-mono text-label-sm font-semibold text-primary">{{ $booking->code }}</span>
                             @include('partials.status', ['status' => $booking->status])
                         </div>
-                        <h2 class="mt-1 text-title-card font-semibold {{ $booking->status === 'cancelled' ? 'text-on-surface-variant line-through' : '' }}">{{ $space->name }}</h2>
-                        <div class="mt-space-sm grid gap-1 text-body-md text-on-surface-variant sm:grid-cols-2">
-                            <span class="flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[18px]">schedule</span>
-                                <span class="font-medium text-on-surface">{{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }}</span>
-                                ({{ $booking->duration_label }})
-                            </span>
-                            <span class="flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[18px]">location_on</span>{{ $space->location }}
-                            </span>
-                            <span class="flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[18px]">groups</span>Kapasitas {{ $space->capacity }} orang
-                            </span>
-                            @if ($booking->notes)
-                                <span class="flex items-center gap-1.5">
-                                    <span class="material-symbols-outlined text-[18px]">sticky_note_2</span>{{ \Illuminate\Support\Str::limit($booking->notes, 40) }}
-                                </span>
-                            @endif
-                        </div>
+                        <h2 class="mt-1 truncate text-title-card font-semibold {{ $booking->status === 'cancelled' ? 'text-on-surface-variant line-through' : '' }}">{{ $space->name }}</h2>
+
+                        <dl class="mt-space-sm grid gap-x-space-md gap-y-space-sm sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)]">
+                            <div>
+                                <dt class="text-body-sm text-on-surface-variant">Tanggal &amp; Jam</dt>
+                                <dd class="mt-0.5 flex items-start gap-1.5 text-body-md font-medium">
+                                    <span class="material-symbols-outlined mt-px text-[18px] text-primary">schedule</span>
+                                    <span>{{ $booking->booking_date->format('d M Y') }}, {{ $booking->time_range }} <span class="font-normal text-on-surface-variant">({{ $booking->duration_label }})</span></span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-body-sm text-on-surface-variant">Lokasi</dt>
+                                <dd class="mt-0.5 flex items-start gap-1.5 text-body-md font-medium">
+                                    <span class="material-symbols-outlined mt-px text-[18px] text-primary">location_on</span>
+                                    <span class="min-w-0 break-words">{{ $space->location }}</span>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-body-sm text-on-surface-variant">Kapasitas</dt>
+                                <dd class="mt-0.5 flex items-start gap-1.5 text-body-md font-medium">
+                                    <span class="material-symbols-outlined mt-px text-[18px] text-primary">groups</span>
+                                    <span>{{ $space->capacity }} orang</span>
+                                </dd>
+                            </div>
+                        </dl>
+
+                        @if ($booking->notes)
+                            <p class="mt-space-sm flex items-start gap-1.5 rounded-lg bg-surface-container-low px-3 py-1.5 text-body-sm text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[16px]">sticky_note_2</span>
+                                <span class="min-w-0 break-words">{{ \Illuminate\Support\Str::limit($booking->notes, 80) }}</span>
+                            </p>
+                        @endif
                     </div>
 
-                    <div class="flex flex-col items-start gap-2 lg:items-end">
-                        <div class="text-body-sm text-on-surface-variant">Estimasi Biaya</div>
-                        <div class="text-headline-md font-bold">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
-                        <div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap items-center justify-between gap-x-space-md gap-y-space-sm border-t border-outline-variant/30 pt-space-md lg:flex-col lg:items-end lg:justify-center lg:border-0 lg:pt-0">
+                        <div class="lg:text-right">
+                            <div class="text-body-sm text-on-surface-variant">Estimasi Biaya</div>
+                            <div class="text-headline-md font-bold {{ $booking->status === 'cancelled' ? 'text-on-surface-variant' : '' }}">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="flex gap-2">
                             @if (! $space->trashed() && $space->is_active)
-                                <a href="{{ route('spaces.show', $space) }}" class="btn-outline">Lihat Ruang</a>
+                                <a href="{{ route('spaces.show', $space) }}" class="btn-outline h-9 w-28 px-3">Lihat Ruang</a>
                             @endif
                             @if (in_array($booking->status, ['pending', 'approved']) && $upcoming)
                                 <form method="POST" action="{{ route('bookings.cancel', $booking) }}" onsubmit="return confirm('Batalkan booking ini?')">
                                     @csrf
                                     @method('PATCH')
-                                    <button class="btn-danger">Batalkan</button>
+                                    <button class="btn-danger h-9 w-28 px-3">Batalkan</button>
                                 </form>
                             @endif
                         </div>
