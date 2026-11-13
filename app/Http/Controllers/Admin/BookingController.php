@@ -15,8 +15,8 @@ class BookingController extends Controller
         $bookings = Booking::with(['user', 'space'])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->when($request->filled('space'), fn ($q) => $q->where('space_id', $request->space))
-            ->latest('booking_date')
-            ->latest('start_time')
+            ->latest()
+            ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
 
