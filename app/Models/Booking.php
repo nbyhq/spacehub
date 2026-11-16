@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
@@ -16,6 +17,24 @@ class Booking extends Model
     protected function casts(): array
     {
         return ['booking_date' => 'date'];
+    }
+
+    /**
+     * Booking yang masih "hidup": berstatus menunggu atau disetujui, dan belum selesai
+     * (tanggalnya masih ke depan, atau hari ini dengan jam selesai yang belum lewat).
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        $today = today()->toDateString();
+        $now = now()->format('H:i:s');
+
+        return $query->whereIn('status', ['pending', 'approved'])
+            ->where(function (Builder $q) use ($today, $now) {
+                $q->whereDate('booking_date', '>', $today)
+                    ->orWhere(function (Builder $t) use ($today, $now) {
+                        $t->whereDate('booking_date', $today)->where('end_time', '>', $now);
+                    });
+            });
     }
 
     public function user()

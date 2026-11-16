@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\SpaceInUseException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -25,6 +26,27 @@ class Space extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    protected static function booted(): void
+    {
+        // Ruang dengan booking aktif tidak boleh dihapus, dari mana pun penghapusan dipanggil.
+        $guard = function (Space $space) {
+            $active = $space->activeBookingsCount();
+
+            if ($active > 0) {
+                throw SpaceInUseException::forSpace($space, $active);
+            }
+        };
+
+        static::deleting($guard);
+        static::registerModelEvent('forceDeleting', $guard);
+    }
+
+    /** Jumlah booking yang masih menunggu atau disetujui dan belum selesai. */
+    public function activeBookingsCount(): int
+    {
+        return $this->bookings()->active()->count();
     }
 
     public function facilities()

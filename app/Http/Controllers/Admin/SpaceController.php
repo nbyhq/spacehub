@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\SpaceInUseException;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Space;
@@ -14,6 +15,7 @@ class SpaceController extends Controller
     public function index(Request $request)
     {
         $spaces = Space::with('facilities')
+            ->withCount(['bookings as active_bookings_count' => fn ($q) => $q->active()])
             ->when($request->filled('q'), function ($q) use ($request) {
                 $keyword = '%'.$request->q.'%';
                 $q->where(fn ($w) => $w->where('name', 'like', $keyword)->orWhere('location', 'like', $keyword));
@@ -89,7 +91,11 @@ class SpaceController extends Controller
 
     public function destroy(Space $space)
     {
-        $space->delete();
+        try {
+            $space->delete();
+        } catch (SpaceInUseException $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('admin.spaces.index')->with('success', 'Ruang berhasil dihapus.');
     }

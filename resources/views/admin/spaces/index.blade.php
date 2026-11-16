@@ -123,12 +123,18 @@
                         <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="btn-outline h-9 flex-1 px-3 sm:flex-none">
                             <span class="material-symbols-outlined text-[18px]">calendar_month</span> Jadwal
                         </a>
-                        <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')" class="ml-auto">
-                            @csrf @method('DELETE')
-                            <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
-                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                            </button>
-                        </form>
+                        @if (($space->active_bookings_count ?? 0) > 0)
+                            <span class="ml-auto inline-flex size-9 cursor-not-allowed items-center justify-center rounded-lg text-slate-400" title="Tidak bisa dihapus: {{ $space->active_bookings_count }} booking aktif" aria-label="Ruang tidak bisa dihapus karena masih ada booking aktif">
+                                <span class="material-symbols-outlined text-[20px]">lock</span>
+                            </span>
+                        @else
+                            <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')" class="ml-auto">
+                                @csrf @method('DELETE')
+                                <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             @empty
@@ -198,12 +204,18 @@
                                     <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="btn-outline h-9 px-3">
                                         <span class="material-symbols-outlined text-[18px]">calendar_month</span> Jadwal
                                     </a>
-                                    <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')">
-                                        @csrf @method('DELETE')
-                                        <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
-                                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                                        </button>
-                                    </form>
+                                    @if (($space->active_bookings_count ?? 0) > 0)
+                                        <span class="inline-flex size-9 cursor-not-allowed items-center justify-center rounded-lg text-slate-400" title="Tidak bisa dihapus: {{ $space->active_bookings_count }} booking aktif" aria-label="Ruang tidak bisa dihapus karena masih ada booking aktif">
+                                            <span class="material-symbols-outlined text-[20px]">lock</span>
+                                        </span>
+                                    @else
+                                        <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')">
+                                            @csrf @method('DELETE')
+                                            <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
+                                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
