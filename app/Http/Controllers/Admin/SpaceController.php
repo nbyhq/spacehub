@@ -14,7 +14,14 @@ class SpaceController extends Controller
 {
     public function index(Request $request)
     {
-        $spaces = Space::with('facilities')
+        $spaces = Space::with([
+            'facilities',
+            // Booking yang masih menunggu/disetujui dan belum selesai, untuk modal "Jadwal" tiap ruang
+            'bookings' => fn ($q) => $q->active()
+                ->with('user:id,name,email')
+                ->orderBy('booking_date')
+                ->orderBy('start_time'),
+        ])
             ->withCount(['bookings as active_bookings_count' => fn ($q) => $q->active()])
             ->when($request->filled('q'), function ($q) use ($request) {
                 $keyword = '%'.$request->q.'%';

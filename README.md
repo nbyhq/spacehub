@@ -35,7 +35,7 @@ SpaceHub memudahkan pengguna menelusuri ruang, mengecek jadwal yang masih kosong
 ### Admin
 - Tampilan terpisah dengan sidebar gelap di semua halaman
 - Dashboard: ruang aktif, permohonan menunggu, booking disetujui bulan ini, dan estimasi pendapatan
-- Kelola ruang: upload foto dengan pratinjau, pilih fasilitas, status aktif, soft delete (ruang dengan booking aktif tidak bisa dihapus), dan filter
+- Kelola ruang: upload foto dengan pratinjau, pilih fasilitas, status aktif, jadwal pemesan tiap ruang (siapa dan hari apa), soft delete (ruang dengan booking aktif tidak bisa dihapus), dan filter
 - Kelola fasilitas
 - Kelola booking: setujui, tolak, hapus, dan filter status
 - Akun admin tidak dapat membuat booking

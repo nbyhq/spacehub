@@ -120,9 +120,12 @@
                         <a href="{{ route('admin.spaces.edit', $space) }}" class="btn-outline h-9 flex-1 px-3 sm:flex-none">
                             <span class="material-symbols-outlined text-[18px]">edit</span> Edit
                         </a>
-                        <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="btn-outline h-9 flex-1 px-3 sm:flex-none">
+                        <button type="button" onclick="document.getElementById('space-bookings-{{ $space->id }}').showModal()" class="btn-outline h-9 flex-1 px-3 sm:flex-none">
                             <span class="material-symbols-outlined text-[18px]">calendar_month</span> Jadwal
-                        </a>
+                            @if ($space->bookings->isNotEmpty())
+                                <span class="rounded-full bg-primary-fixed px-1.5 text-label-sm font-semibold text-on-primary-fixed">{{ $space->bookings->count() }}</span>
+                            @endif
+                        </button>
                         @if (($space->active_bookings_count ?? 0) > 0)
                             <span class="ml-auto inline-flex size-9 cursor-not-allowed items-center justify-center rounded-lg text-slate-400" title="Tidak bisa dihapus: {{ $space->active_bookings_count }} booking aktif" aria-label="Ruang tidak bisa dihapus karena masih ada booking aktif">
                                 <span class="material-symbols-outlined text-[20px]">lock</span>
@@ -201,9 +204,12 @@
                                     <a href="{{ route('admin.spaces.edit', $space) }}" class="btn-outline h-9 px-3">
                                         <span class="material-symbols-outlined text-[18px]">edit</span> Edit
                                     </a>
-                                    <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="btn-outline h-9 px-3">
+                                    <button type="button" onclick="document.getElementById('space-bookings-{{ $space->id }}').showModal()" class="btn-outline h-9 px-3">
                                         <span class="material-symbols-outlined text-[18px]">calendar_month</span> Jadwal
-                                    </a>
+                                        @if ($space->bookings->isNotEmpty())
+                                            <span class="rounded-full bg-primary-fixed px-1.5 text-label-sm font-semibold text-on-primary-fixed">{{ $space->bookings->count() }}</span>
+                                        @endif
+                                    </button>
                                     @if (($space->active_bookings_count ?? 0) > 0)
                                         <span class="inline-flex size-9 cursor-not-allowed items-center justify-center rounded-lg text-slate-400" title="Tidak bisa dihapus: {{ $space->active_bookings_count }} booking aktif" aria-label="Ruang tidak bisa dihapus karena masih ada booking aktif">
                                             <span class="material-symbols-outlined text-[20px]">lock</span>
@@ -241,4 +247,80 @@
             </div>
         @endif
     </div>
+    {{-- Modal jadwal booking per ruang: siapa saja yang sudah booking dan di hari apa --}}
+    @foreach ($spaces as $space)
+        @php
+            $visible = $space->bookings->take(40);
+            $hidden = $space->bookings->count() - $visible->count();
+            $byDay = $visible->groupBy(fn ($b) => $b->booking_date->toDateString());
+        @endphp
+        <dialog id="space-bookings-{{ $space->id }}" aria-labelledby="space-bookings-title-{{ $space->id }}"
+                class="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden rounded-xl bg-surface-container-lowest p-0 text-on-surface shadow-xl backdrop:bg-slate-900/50"
+                onclick="if (event.target === this) this.close()">
+            <div class="flex max-h-[85vh] flex-col">
+                <div class="flex items-start justify-between gap-3 border-b border-outline-variant/40 px-space-lg py-space-md">
+                    <div class="min-w-0">
+                        <h2 id="space-bookings-title-{{ $space->id }}" class="truncate text-title-card font-semibold">Jadwal Booking &middot; {{ $space->name }}</h2>
+                        <p class="mt-0.5 text-body-sm text-on-surface-variant">
+                            {{ $space->bookings->count() }} booking aktif &middot; buka {{ $space->opensAtLabel() }}&ndash;{{ $space->closesAtLabel() }}
+                        </p>
+                    </div>
+                    <form method="dialog">
+                        <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-low" aria-label="Tutup">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="overflow-y-auto px-space-lg py-space-md">
+                    @forelse ($byDay as $items)
+                        @php $day = $items->first()->booking_date; @endphp
+                        <div class="{{ $loop->first ? '' : 'mt-space-md' }}">
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-label-md font-semibold">{{ $items->first()->day_label }}</h3>
+                                @if ($day->isToday())
+                                    <span class="rounded-full bg-primary-fixed px-2 py-0.5 text-label-sm font-semibold text-on-primary-fixed">Hari ini</span>
+                                @elseif ($day->isTomorrow())
+                                    <span class="rounded-full bg-primary-fixed px-2 py-0.5 text-label-sm font-semibold text-on-primary-fixed">Besok</span>
+                                @endif
+                            </div>
+                            <ul class="mt-space-sm divide-y divide-outline-variant/30 rounded-lg border border-outline-variant/40">
+                                @foreach ($items as $b)
+                                    <li class="flex flex-wrap items-center justify-between gap-x-space-md gap-y-1 px-3 py-2.5">
+                                        <div class="flex min-w-0 items-center gap-3">
+                                            <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-label-sm font-semibold text-on-primary-fixed">
+                                                {{ mb_strtoupper(mb_substr($b->user?->name ?? '?', 0, 1)) }}
+                                            </span>
+                                            <div class="min-w-0">
+                                                <div class="truncate font-medium">{{ $b->user?->name ?? 'Pengguna dihapus' }}</div>
+                                                <div class="truncate text-body-sm text-on-surface-variant">{{ $b->user?->email }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-body-md font-medium">{{ $b->time_range }}</span>
+                                            @include('partials.status', ['status' => $b->status])
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @empty
+                        <div class="flex flex-col items-center gap-1 py-10 text-center text-on-surface-variant">
+                            <span class="material-symbols-outlined text-[36px]">event_available</span>
+                            <p>Belum ada booking mendatang untuk ruang ini.</p>
+                        </div>
+                    @endforelse
+
+                    @if ($hidden > 0)
+                        <p class="mt-space-md text-center text-body-sm text-on-surface-variant">dan {{ $hidden }} booking lainnya. Lihat selengkapnya di Kelola Booking.</p>
+                    @endif
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-outline-variant/40 px-space-lg py-space-md">
+                    <span class="text-body-sm text-on-surface-variant">Hanya booking menunggu atau disetujui yang belum selesai.</span>
+                    <a href="{{ route('admin.bookings.index', ['space' => $space->id]) }}" class="btn-outline h-9 px-3">Lihat semua di Kelola Booking</a>
+                </div>
+            </div>
+        </dialog>
+    @endforeach
 @endsection

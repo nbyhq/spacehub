@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\IndonesianDate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,6 +70,12 @@ class Booking extends Model
     public function getTotalPriceAttribute(): int
     {
         return (int) round($this->duration_hours * ($this->space->price_per_hour ?? 0));
+    }
+
+    /** Contoh: "Sabtu, 21 Nov 2026". */
+    public function getDayLabelAttribute(): string
+    {
+        return IndonesianDate::full($this->booking_date);
     }
 
     public function getTimeRangeAttribute(): string
