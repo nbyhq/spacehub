@@ -107,4 +107,14 @@ class ProfileTest extends TestCase
             ])
             ->assertSessionHasErrors('password');
     }
+
+    public function test_profile_page_works_when_created_at_is_null(): void
+    {
+        $user = User::factory()->create();
+        User::whereKey($user->id)->update(['created_at' => null]);
+
+        $this->actingAs($user->fresh())
+            ->get(route('profile.edit'))
+            ->assertOk();
+    }
 }

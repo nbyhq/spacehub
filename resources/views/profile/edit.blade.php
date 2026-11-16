@@ -9,7 +9,7 @@
         </span>
         <h1 class="text-headline-lg font-bold tracking-tight md:text-headline-xl">Profil Saya</h1>
         <p class="mt-1 text-body-lg text-on-surface-variant">
-            Bergabung sejak {{ $user->created_at->translatedFormat('F Y') }}
+            {{ $user->created_at ? 'Bergabung sejak '.$user->created_at->translatedFormat('F Y') : 'Akun SpaceHub' }}
             @can('admin')
                 <span class="ml-1 rounded-full bg-primary-fixed px-2 py-0.5 text-label-sm font-semibold text-on-primary-fixed">Admin</span>
             @endcan
