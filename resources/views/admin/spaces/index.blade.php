@@ -79,7 +79,7 @@
         </form>
 
         {{-- Tablet & HP: daftar kartu --}}
-        <div class="divide-y divide-outline-variant/30 lg:hidden">
+        <div class="divide-y divide-outline-variant/30 xl:hidden">
             @forelse ($spaces as $space)
                 <div class="space-y-3 p-space-md {{ $space->is_active ? '' : 'bg-surface-container-low/40' }}">
                     <div class="flex items-start gap-3">
@@ -93,7 +93,6 @@
                             </div>
                             <div class="mt-1.5">@include('partials.type-chip', ['type' => $space->type])</div>
                         </div>
-                        @include('partials.active', ['active' => $space->is_active])
                     </div>
 
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-body-md">
@@ -115,6 +114,11 @@
                             @endif
                         </div>
                     @endif
+
+                    <div class="flex items-center justify-between rounded-lg bg-surface-container-low px-3 py-1.5">
+                        <span class="text-body-sm text-on-surface-variant">Tampil &amp; bisa dipesan</span>
+                        @include('partials.space-toggle', ['space' => $space])
+                    </div>
 
                     <div class="flex items-center gap-2">
                         <a href="{{ route('admin.spaces.edit', $space) }}" class="btn-outline h-9 flex-1 px-3 sm:flex-none">
@@ -150,17 +154,17 @@
         </div>
 
         {{-- Desktop: tabel --}}
-        <div class="hidden overflow-x-auto lg:block">
-            <table class="w-full text-body-md">
+        <div class="hidden overflow-x-auto xl:block">
+            <table class="w-full table-fixed text-body-md">
                 <thead class="bg-surface-container-low">
                     <tr>
-                        <th class="th">Ruang</th>
-                        <th class="th">Tipe</th>
-                        <th class="th">Kapasitas</th>
-                        <th class="th">Tarif Sewa</th>
-                        <th class="th">Fasilitas</th>
-                        <th class="th">Status</th>
-                        <th class="th text-right">Aksi</th>
+                        <th class="th w-[27%]">Ruang</th>
+                        <th class="th w-[12%]">Tipe</th>
+                        <th class="th w-[10%]">Kapasitas</th>
+                        <th class="th w-[12%]">Tarif Sewa</th>
+                        <th class="th w-[16%]">Fasilitas</th>
+                        <th class="th w-[13%]">Status</th>
+                        <th class="th w-40 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant/30">
@@ -172,9 +176,10 @@
                                         @include('partials.space-photo', ['space' => $space, 'class' => 'size-14'])
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-semibold">{{ $space->name }}</div>
+                                        <div class="truncate font-semibold" title="{{ $space->name }}">{{ $space->name }}</div>
                                         <div class="mt-0.5 flex items-center gap-1 text-body-sm text-on-surface-variant">
-                                            <span class="material-symbols-outlined text-[14px]">location_on</span>{{ $space->location }}
+                                            <span class="material-symbols-outlined shrink-0 text-[14px]">location_on</span>
+                                            <span class="truncate" title="{{ $space->location }}">{{ $space->location }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -189,7 +194,7 @@
                                 <span class="text-body-sm font-normal text-on-surface-variant">/ jam</span>
                             </td>
                             <td class="td">
-                                <div class="flex max-w-56 flex-wrap gap-1">
+                                <div class="flex flex-wrap gap-1">
                                     @foreach ($space->facilities->take(3) as $facility)
                                         <span class="chip-sm">{{ $facility->name }}</span>
                                     @endforeach
@@ -198,16 +203,16 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="td">@include('partials.active', ['active' => $space->is_active])</td>
+                            <td class="td">@include('partials.space-toggle', ['space' => $space])</td>
                             <td class="td">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.spaces.edit', $space) }}" class="btn-outline h-9 px-3">
-                                        <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                                <div class="ml-auto grid w-[7.25rem] grid-cols-3 justify-items-center gap-1">
+                                    <a href="{{ route('admin.spaces.edit', $space) }}" class="inline-flex size-9 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface" title="Edit" aria-label="Edit {{ $space->name }}">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
                                     </a>
-                                    <button type="button" onclick="document.getElementById('space-bookings-{{ $space->id }}').showModal()" class="btn-outline h-9 px-3">
-                                        <span class="material-symbols-outlined text-[18px]">calendar_month</span> Jadwal
+                                    <button type="button" onclick="document.getElementById('space-bookings-{{ $space->id }}').showModal()" class="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface" title="Jadwal booking" aria-label="Jadwal booking {{ $space->name }}">
+                                        <span class="material-symbols-outlined text-[20px]">calendar_month</span>
                                         @if ($space->bookings->isNotEmpty())
-                                            <span class="rounded-full bg-primary-fixed px-1.5 text-label-sm font-semibold text-on-primary-fixed">{{ $space->bookings->count() }}</span>
+                                            <span class="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] font-semibold leading-4 text-on-primary">{{ $space->bookings->count() }}</span>
                                         @endif
                                     </button>
                                     @if (($space->active_bookings_count ?? 0) > 0)
@@ -217,7 +222,7 @@
                                     @else
                                         <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')">
                                             @csrf @method('DELETE')
-                                            <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
+                                            <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus {{ $space->name }}">
                                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                                             </button>
                                         </form>

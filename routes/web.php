@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::patch('spaces/{space}/toggle', [AdminSpaceController::class, 'toggle'])->name('spaces.toggle');
     Route::resource('spaces', AdminSpaceController::class)->except('show');
     Route::resource('facilities', FacilityController::class)->except(['show', 'create']);
     Route::resource('bookings', AdminBookingController::class)->only(['index', 'update', 'destroy']);

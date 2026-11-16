@@ -96,6 +96,16 @@ class SpaceController extends Controller
         return redirect()->route('admin.spaces.index')->with('success', 'Ruang berhasil diperbarui.');
     }
 
+    /** Aktifkan atau nonaktifkan ruang langsung dari daftar. Booking yang sudah ada tidak diubah. */
+    public function toggle(Space $space)
+    {
+        $space->update(['is_active' => ! $space->is_active]);
+
+        return back()->with('success', $space->is_active
+            ? "Ruang \"{$space->name}\" diaktifkan dan bisa dipesan kembali."
+            : "Ruang \"{$space->name}\" dinonaktifkan dan tidak tampil untuk pemesanan baru.");
+    }
+
     public function destroy(Space $space)
     {
         try {
