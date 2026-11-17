@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\SpaceController as AdminSpaceController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HomeController;
@@ -41,4 +42,7 @@ Route::middleware(['auth', 'can:admin'])->prefix('admin')->name('admin.')->group
     Route::resource('spaces', AdminSpaceController::class)->except('show');
     Route::resource('facilities', FacilityController::class)->except(['show', 'create']);
     Route::resource('bookings', AdminBookingController::class)->only(['index', 'update', 'destroy']);
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::patch('users/{user}/role', [AdminUserController::class, 'updateRole'])->name('users.role');
 });

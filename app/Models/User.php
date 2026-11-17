@@ -17,6 +17,11 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
