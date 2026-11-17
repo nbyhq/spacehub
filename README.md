@@ -8,7 +8,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.4%2B-777BB4?logo=php&logoColor=white)
 ![MariaDB](https://img.shields.io/badge/MariaDB-003545?logo=mariadb&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-22%20passed-2ea44f)
+![Tests](https://img.shields.io/badge/tests-74%20passed-2ea44f)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 </div>
