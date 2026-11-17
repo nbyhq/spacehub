@@ -23,7 +23,10 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('home'));
+            // Admin langsung ke dashboard, pengguna biasa ke beranda. Halaman tujuan sebelum login tetap diutamakan.
+            $default = $request->user()->can('admin') ? route('admin.dashboard') : route('home');
+
+            return redirect()->intended($default);
         }
 
         return back()->withErrors(['email' => 'Email atau password salah.'])->onlyInput('email');

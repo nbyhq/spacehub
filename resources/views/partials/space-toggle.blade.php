@@ -2,11 +2,11 @@
 @php
     $count = (int) ($space->active_bookings_count ?? 0);
     $confirm = $space->is_active && $count > 0
-        ? "Ruang ini masih punya {$count} booking aktif. Booking tersebut tetap berjalan, tetapi ruang tidak bisa dipesan lagi. Nonaktifkan?"
+        ? "Ruang ini masih punya {$count} booking aktif. Booking tersebut tetap berjalan, tetapi ruang tidak bisa dipesan lagi."
         : null;
 @endphp
 <form method="POST" action="{{ route('admin.spaces.toggle', $space) }}"
-      @if ($confirm) onsubmit="return confirm(@js($confirm))" @endif
+      @if ($confirm) data-confirm-title="Nonaktifkan ruang?" data-confirm="{{ $confirm }}" data-confirm-ok="Nonaktifkan" data-confirm-cancel="Kembali" @endif
       class="inline-flex">
     @csrf @method('PATCH')
     <button type="submit" role="switch" aria-checked="{{ $space->is_active ? 'true' : 'false' }}"

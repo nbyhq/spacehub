@@ -135,7 +135,7 @@
                                 <span class="material-symbols-outlined text-[20px]">lock</span>
                             </span>
                         @else
-                            <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')" class="ml-auto">
+                            <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" data-confirm-title="Hapus ruang?" data-confirm="Ruang ini akan dihapus dan tidak tampil lagi di katalog." data-confirm-ok="Hapus" class="ml-auto">
                                 @csrf @method('DELETE')
                                 <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus ruang">
                                     <span class="material-symbols-outlined text-[20px]">delete</span>
@@ -220,7 +220,7 @@
                                             <span class="material-symbols-outlined text-[20px]">lock</span>
                                         </span>
                                     @else
-                                        <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" onsubmit="return confirm('Hapus ruang ini?')">
+                                        <form method="POST" action="{{ route('admin.spaces.destroy', $space) }}" data-confirm-title="Hapus ruang?" data-confirm="Ruang ini akan dihapus dan tidak tampil lagi di katalog." data-confirm-ok="Hapus">
                                             @csrf @method('DELETE')
                                             <button class="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-red-700 transition-colors hover:bg-red-50" title="Hapus" aria-label="Hapus {{ $space->name }}">
                                                 <span class="material-symbols-outlined text-[20px]">delete</span>

@@ -45,7 +45,7 @@
                             <td class="td">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.facilities.edit', $facility) }}" class="rounded-lg bg-surface-container px-3 py-1.5 text-label-md font-medium hover:bg-surface-container-high">Edit</a>
-                                    <form method="POST" action="{{ route('admin.facilities.destroy', $facility) }}" onsubmit="return confirm('Hapus fasilitas ini?')">
+                                    <form method="POST" action="{{ route('admin.facilities.destroy', $facility) }}" data-confirm-title="Hapus fasilitas?" data-confirm="Fasilitas ini akan dihapus dari daftar." data-confirm-ok="Hapus">
                                         @csrf @method('DELETE')
                                         <button class="rounded-lg px-2 py-1.5 text-red-700 hover:bg-red-50" title="Hapus">
                                             <span class="material-symbols-outlined text-[20px]">delete</span>

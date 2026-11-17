@@ -123,6 +123,7 @@
     })();
 </script>
 
+@include('partials.confirm-dialog')
 @stack('scripts')
 </body>
 </html>

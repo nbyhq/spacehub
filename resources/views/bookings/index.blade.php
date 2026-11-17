@@ -111,7 +111,7 @@
                                 <a href="{{ route('spaces.show', $space) }}" class="btn-outline h-9 w-28 px-3">Lihat Ruang</a>
                             @endif
                             @if (in_array($booking->status, ['pending', 'approved']) && $upcoming)
-                                <form method="POST" action="{{ route('bookings.cancel', $booking) }}" onsubmit="return confirm('Batalkan booking ini?')">
+                                <form method="POST" action="{{ route('bookings.cancel', $booking) }}" data-confirm-title="Batalkan booking?" data-confirm="Slot waktu akan dibuka kembali untuk pengguna lain." data-confirm-ok="Ya, batalkan" data-confirm-cancel="Kembali">
                                     @csrf
                                     @method('PATCH')
                                     <button class="btn-danger h-9 w-28 px-3">Batalkan</button>

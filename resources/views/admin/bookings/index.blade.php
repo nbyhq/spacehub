@@ -64,7 +64,7 @@
                                 <button class="btn-danger h-9 px-4">Tolak</button>
                             </form>
                         @endif
-                        <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" onsubmit="return confirm('Hapus booking ini?')" class="ml-auto">
+                        <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" data-confirm-title="Hapus booking?" data-confirm="Booking ini akan dihapus dari daftar." data-confirm-ok="Hapus" class="ml-auto">
                             @csrf @method('DELETE')
                             <button class="rounded-lg px-2 py-1.5 text-red-700 hover:bg-red-50" title="Hapus">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
@@ -117,7 +117,7 @@
                                             <button class="btn-danger h-8 px-3">Tolak</button>
                                         </form>
                                     @endif
-                                    <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" onsubmit="return confirm('Hapus booking ini?')">
+                                    <form method="POST" action="{{ route('admin.bookings.destroy', $booking) }}" data-confirm-title="Hapus booking?" data-confirm="Booking ini akan dihapus dari daftar." data-confirm-ok="Hapus">
                                         @csrf @method('DELETE')
                                         <button class="rounded-lg px-2 py-1.5 text-red-700 hover:bg-red-50" title="Hapus">
                                             <span class="material-symbols-outlined text-[20px]">delete</span>
