@@ -34,7 +34,7 @@
                         <div class="relative">
                             <span class="material-symbols-outlined pointer-events-none absolute left-3 top-3 text-[20px] text-on-surface-variant">mail</span>
                             <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email"
-                                   placeholder="nama@email.com" class="input h-11 pl-10 text-base sm:text-body-md">
+                                   placeholder="email@spacehub.com" class="input h-11 pl-10 text-base sm:text-body-md">
                         </div>
                         @error('email')<p class="field-error">{{ $message }}</p>@enderror
                     </div>

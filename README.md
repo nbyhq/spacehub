@@ -34,14 +34,16 @@ SpaceHub memudahkan pengguna menelusuri ruang, mengecek jadwal yang masih kosong
 
 ### Admin
 - Tampilan terpisah dengan sidebar gelap di semua halaman
+- Admin langsung diarahkan ke dashboard setelah login
 - Dashboard: ruang aktif, permohonan menunggu, booking disetujui bulan ini, dan estimasi pendapatan
-- Kelola ruang: upload foto dengan pratinjau, pilih fasilitas, status aktif, jadwal pemesan tiap ruang (siapa dan hari apa), soft delete (ruang dengan booking aktif tidak bisa dihapus), dan filter
+- Kelola ruang: upload foto dengan pratinjau, pilih fasilitas, saklar aktif/nonaktif langsung dari tabel, jadwal pemesan tiap ruang (siapa dan hari apa), soft delete (ruang dengan booking aktif tidak bisa dihapus), dan filter
 - Kelola fasilitas
 - Kelola booking: setujui, tolak, hapus, dan filter status
+- Kelola pengguna: daftar dengan pencarian dan filter role, detail riwayat booking, serta ubah role (admin tidak bisa mengubah role dirinya sendiri)
 - Akun admin tidak dapat membuat booking
 
 ### Kualitas
-- Test otomatis untuk aturan booking, hak akses, profil, dan landing page
+- Test otomatis untuk aturan booking, jam operasional, hapus ruang, hak akses, profil, kelola pengguna, dan landing page
 
 ## Teknologi
 
