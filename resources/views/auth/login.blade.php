@@ -43,10 +43,13 @@
                         'id' => 'password', 'name' => 'password', 'label' => 'Password', 'autocomplete' => 'current-password',
                     ])
 
-                    <label class="flex cursor-pointer items-center gap-2 text-body-md">
-                        <input type="checkbox" name="remember" class="size-4 rounded border-outline-variant accent-primary-container">
-                        Ingat saya
-                    </label>
+                    <div class="flex items-center justify-between gap-3">
+                        <label class="flex cursor-pointer items-center gap-2 text-body-md">
+                            <input type="checkbox" name="remember" class="size-4 rounded border-outline-variant accent-primary-container">
+                            Ingat saya
+                        </label>
+                        <a href="{{ route('password.request') }}" class="text-body-md font-medium text-primary hover:underline">Lupa password?</a>
+                    </div>
 
                     <button class="btn-primary h-12 w-full text-body-lg shadow-lg shadow-primary/25">
                         Masuk <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
