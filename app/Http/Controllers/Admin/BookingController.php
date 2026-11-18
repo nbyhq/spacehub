@@ -42,7 +42,7 @@ class BookingController extends Controller
 
         $filterSpace = $request->filled('space') ? Space::withTrashed()->find($request->space) : null;
 
-        return view('admin.bookings.index', compact('bookings', 'filterSpace'));
+        return view('admin.bookings.index', compact('bookings', 'filterSpace', 'stats'));
     }
 
     public function update(Request $request, Booking $booking)

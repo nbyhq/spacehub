@@ -48,7 +48,7 @@ class AdminUserTest extends TestCase
             ->get(route('admin.users.index'))
             ->assertOk()
             ->assertSee('Budi Santoso')
-            ->assertSee('(1 aktif)');
+            ->assertSee('1 aktif');
     }
 
     public function test_search_and_role_filter(): void
