@@ -64,6 +64,10 @@
                 <a href="{{ route('admin.bookings.index', array_filter(['space' => request('space')])) }}" class="btn-outline" title="Reset filter" aria-label="Reset filter">
                     <span class="material-symbols-outlined text-[18px]">refresh</span>
                 </a>
+                <a href="{{ route('admin.reports.bookings', array_filter(['status' => $statusNow, 'space' => request('space')])) }}" target="_blank" rel="noopener" class="btn-outline" title="Cetak laporan" aria-label="Cetak laporan">
+                    <span class="material-symbols-outlined text-[18px]">print</span>
+                    <span class="hidden lg:inline">Cetak</span>
+                </a>
             </div>
         </form>
 

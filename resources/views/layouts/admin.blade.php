@@ -21,6 +21,7 @@
         ['admin.spaces.index', 'meeting_room', 'Kelola Ruang', request()->routeIs('admin.spaces.*')],
         ['admin.facilities.index', 'tune', 'Fasilitas', request()->routeIs('admin.facilities.*')],
         ['admin.users.index', 'group', 'Pengguna', request()->routeIs('admin.users.*')],
+        ['admin.reports.bookings', 'print', 'Laporan', request()->routeIs('admin.reports.*')],
     ];
     $initial = mb_strtoupper(mb_substr(auth()->user()->name, 0, 1));
 @endphp

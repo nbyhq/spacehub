@@ -40,6 +40,7 @@ SpaceHub memudahkan pengguna menelusuri ruang, mengecek jadwal yang masih kosong
 - Kelola fasilitas
 - Kelola booking: setujui, tolak, hapus, dan filter status
 - Kelola pengguna: daftar dengan pencarian dan filter role, detail riwayat booking, serta ubah role (admin tidak bisa mengubah role dirinya sendiri)
+- Laporan booking siap cetak: filter periode, ruang, dan status, ringkasan jumlah dan estimasi pendapatan, serta rekap per ruang (Ctrl+P atau simpan sebagai PDF dari browser)
 - Akun admin tidak dapat membuat booking
 
 ### Kualitas
