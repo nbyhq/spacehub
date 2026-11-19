@@ -12,10 +12,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        @page { size: A4; margin: 12mm; }
+        /* A4 tanpa margin atas/samping: header & footer dibuat sendiri supaya posisinya konstan di tiap halaman */
+        @page {
+            size: A4;
+            margin: 0 0 10mm 0;
+            @bottom-right {
+                content: "Halaman " counter(page) " dari " counter(pages);
+                font: 8pt Inter, Arial, sans-serif;
+                color: #64748b;
+                padding-right: 12mm;
+            }
+        }
+        :root { --print-head: 26mm; --print-foot: 12mm; --print-side: 12mm; }
+        .print-frame > thead, .print-frame > tfoot { display: none; }
         @media print {
             html, body { background: #fff !important; }
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-head { position: fixed; top: 0; left: 0; right: 0; z-index: 10; box-sizing: border-box; padding: 8mm var(--print-side) 4mm; background: #fff; }
+            .print-foot { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; box-sizing: border-box; height: var(--print-foot); padding: 0 var(--print-side); margin: 0; background: #fff; }
+            .print-frame { width: 100%; border-collapse: collapse; }
+            .print-frame > thead { display: table-header-group; }
+            .print-frame > tfoot { display: table-footer-group; }
+            .print-frame > thead > tr > td { height: calc(var(--print-head) + 4mm); padding: 0; }
+            .print-frame > tfoot > tr > td { height: calc(var(--print-foot) + 4mm); padding: 0; }
+            .print-frame > tbody > tr > td { padding: 0 var(--print-side); }
         }
     </style>
 </head>

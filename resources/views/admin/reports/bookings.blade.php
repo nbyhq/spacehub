@@ -99,62 +99,108 @@
                 </div>
             </form>
         </section>
+
+        <p class="flex items-start gap-1.5 text-body-sm text-on-surface-variant">
+            <span class="material-symbols-outlined text-[16px]">info</span>
+            <span>Saat mencetak: pilih kertas A4, margin Default, dan matikan opsi &quot;Header dan footer&quot; (Headers and footers) agar hasilnya bersih.</span>
+        </p>
     </div>
 
-    {{-- Lembar laporan --}}
-    <article class="mx-auto max-w-[210mm] bg-white p-8 shadow-sm print:max-w-none print:p-0 print:shadow-none">
-        <header class="flex items-start justify-between gap-4 border-b-2 border-primary pb-4">
+    {{-- Lembar laporan (laporan-corporate) --}}
+    @php
+        $docNo = 'LAP-BKG/'.now()->format('Y/m/d-His');
+        $rate = $summary['total'] > 0 ? round($summary['approved'] / $summary['total'] * 100) : 0;
+        $no = 0;
+    @endphp
+    <article class="mx-auto max-w-[210mm] bg-white p-8 text-slate-900 shadow-sm print:max-w-none print:p-0 print:shadow-none">
+        <header class="print-head flex items-center justify-between gap-4 border-b-2 border-slate-900 pb-3">
             <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="size-12">
+                <img src="{{ asset('images/logo.png') }}" alt="" class="size-11">
                 <div>
-                    <div class="text-title-card font-bold text-primary">SpaceHub</div>
-                    <div class="text-body-sm text-on-surface-variant">Platform pemesanan ruang kerja</div>
+                    <div class="text-title-card font-bold leading-tight tracking-tight">SpaceHub</div>
+                    <div class="text-body-sm text-slate-600">Platform Pemesanan Ruang Kerja</div>
                 </div>
             </div>
-            <div class="text-right">
-                <h1 class="text-headline-md font-bold">Laporan Booking</h1>
-                <div class="text-body-sm text-on-surface-variant">Dicetak {{ $printedAt }}</div>
-                <div class="text-body-sm text-on-surface-variant">oleh {{ auth()->user()->name }}</div>
+            <div class="text-right text-body-sm leading-snug text-slate-600">
+                <div class="text-label-md font-semibold text-slate-900">Laporan Booking</div>
+                <div class="font-mono">{{ $docNo }}</div>
             </div>
         </header>
 
-        <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-body-md">
-            <dt class="text-on-surface-variant">Periode</dt>
-            <dd class="font-medium">{{ $period['label'] }}</dd>
-            <dt class="text-on-surface-variant">Ruang</dt>
-            <dd class="font-medium">{{ $space ? $space->name.($space->trashed() ? ' (dihapus)' : '') : 'Semua ruang' }}</dd>
-            <dt class="text-on-surface-variant">Status</dt>
-            <dd class="font-medium">{{ $status ? $statusLabels[$status] : 'Semua status' }}</dd>
-        </dl>
+        <table class="print-frame w-full">
+            <thead><tr><td></td></tr></thead>
+            <tbody><tr><td class="align-top">
 
-        <section class="mt-5 grid grid-cols-2 gap-2 text-center sm:grid-cols-5 print:grid-cols-5">
-            @foreach ([['total', 'Total booking'], ['approved', 'Disetujui'], ['pending', 'Menunggu'], ['cancelled', 'Dibatalkan']] as [$key, $label])
-                <div class="rounded-lg border border-outline-variant p-2">
-                    <div class="text-headline-md font-bold leading-none" data-summary="{{ $key }}">{{ $summary[$key] }}</div>
-                    <div class="mt-1 text-body-sm text-on-surface-variant">{{ $label }}</div>
-                </div>
-            @endforeach
-            <div class="col-span-2 rounded-lg border border-primary bg-primary-fixed/40 p-2 sm:col-span-1 print:col-span-1">
-                <div class="text-title-card font-bold leading-none text-primary" data-summary="revenue">{{ $rp($summary['revenue']) }}</div>
-                <div class="mt-1 text-body-sm text-on-surface-variant">Estimasi Pendapatan</div>
-            </div>
+        <h1 class="mt-1 text-center text-headline-md font-bold tracking-tight">Laporan Booking Ruang Kerja</h1>
+
+        <table class="mt-4 w-full border-collapse border border-slate-300 text-body-sm">
+            <tbody>
+                <tr class="border-b border-slate-300">
+                    <th class="w-28 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Nomor Dokumen</th>
+                    <td class="px-2.5 py-1.5 font-mono">{{ $docNo }}</td>
+                    <th class="w-24 border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Ruang</th>
+                    <td class="px-2.5 py-1.5">{{ $space ? $space->name.($space->trashed() ? ' (dihapus)' : '') : 'Semua ruang' }}</td>
+                </tr>
+                <tr class="border-b border-slate-300">
+                    <th class="bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Periode</th>
+                    <td class="px-2.5 py-1.5">{{ $period['label'] }}</td>
+                    <th class="border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Status</th>
+                    <td class="px-2.5 py-1.5">{{ $status ? $statusLabels[$status] : 'Semua status' }}</td>
+                </tr>
+                <tr>
+                    <th class="bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Tanggal Cetak</th>
+                    <td class="px-2.5 py-1.5">{{ $printedAt }}</td>
+                    <th class="border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Dicetak oleh</th>
+                    <td class="px-2.5 py-1.5">{{ auth()->user()->name }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <section class="mt-5 break-inside-avoid">
+            <h2 class="mb-1.5 text-label-md font-bold">{{ ++$no }}. Ringkasan</h2>
+            <p class="mb-2 text-body-sm leading-relaxed text-slate-700">
+                Pada periode {{ $period['label'] }} tercatat <strong>{{ $summary['total'] }}</strong> booking{{ $space ? ' untuk ruang '.$space->name : '' }},
+                dengan {{ $summary['approved'] }} disetujui ({{ $rate }}%), {{ $summary['pending'] }} menunggu persetujuan, dan {{ $summary['cancelled'] }} dibatalkan.
+                Estimasi pendapatan dari booking disetujui sebesar <strong>{{ $rp($summary['revenue']) }}</strong>.
+            </p>
+            <table class="w-full border-collapse border border-slate-300 text-center text-body-sm">
+                <thead>
+                    <tr class="bg-slate-800 text-white">
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Total Booking</th>
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Disetujui</th>
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Menunggu</th>
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Dibatalkan</th>
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Tingkat Persetujuan</th>
+                        <th class="border border-slate-700 px-2 py-1.5 font-semibold">Estimasi Pendapatan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="tabular-nums">
+                        @foreach (['total', 'approved', 'pending', 'cancelled'] as $key)
+                            <td class="border border-slate-300 px-2 py-2.5 text-label-md font-semibold"><div data-summary="{{ $key }}">{{ $summary[$key] }}</div></td>
+                        @endforeach
+                        <td class="border border-slate-300 px-2 py-2.5 text-label-md font-semibold">{{ $rate }}%</td>
+                        <td class="border border-slate-300 px-2 py-2.5 text-label-md font-semibold"><div data-summary="revenue">{{ $rp($summary['revenue']) }}</div></td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         @if ($bySpace->count() > 1)
             <section class="mt-5">
-                <h2 class="mb-2 text-label-md font-semibold uppercase tracking-wide text-on-surface-variant">Rekap per Ruang</h2>
-                <table class="w-full border-collapse text-body-sm">
+                <h2 class="mb-1.5 text-label-md font-bold">{{ ++$no }}. Rekap per Ruang</h2>
+                <table class="w-full border-collapse border border-slate-300 text-body-sm tabular-nums">
                     <thead class="table-header-group">
-                        <tr class="border-y border-outline-variant bg-surface-container-low text-left">
-                            <th class="px-2 py-1.5">Ruang</th>
-                            <th class="px-2 py-1.5 text-right">Booking</th>
-                            <th class="px-2 py-1.5 text-right">Disetujui</th>
-                            <th class="px-2 py-1.5 text-right">Estimasi Pendapatan</th>
+                        <tr class="bg-slate-800 text-left text-white">
+                            <th class="px-2 py-1.5 font-semibold">Ruang</th>
+                            <th class="px-2 py-1.5 font-semibold text-right">Booking</th>
+                            <th class="px-2 py-1.5 font-semibold text-right">Disetujui</th>
+                            <th class="px-2 py-1.5 font-semibold text-right">Estimasi Pendapatan</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($bySpace as $row)
-                            <tr class="break-inside-avoid border-b border-outline-variant/50">
+                            <tr class="break-inside-avoid border-b border-slate-300 even:bg-slate-50">
                                 <td class="px-2 py-1.5 font-medium">{{ $row['name'] }}</td>
                                 <td class="px-2 py-1.5 text-right">{{ $row['total'] }}</td>
                                 <td class="px-2 py-1.5 text-right">{{ $row['approved'] }}</td>
@@ -167,48 +213,48 @@
         @endif
 
         <section class="mt-5">
-            <h2 class="mb-2 text-label-md font-semibold uppercase tracking-wide text-on-surface-variant">Daftar Booking</h2>
+            <h2 class="mb-1.5 text-label-md font-bold">{{ ++$no }}. Rincian Booking</h2>
             <div class="overflow-x-auto print:overflow-visible">
-                <table class="w-full min-w-[640px] border-collapse text-body-sm print:min-w-0">
+                <table class="w-full min-w-[640px] border-collapse border border-slate-300 text-body-sm tabular-nums print:min-w-0">
                     <thead class="table-header-group">
-                        <tr class="border-y border-outline-variant bg-surface-container-low text-left">
-                            <th class="px-2 py-1.5">No</th>
-                            <th class="px-2 py-1.5">Kode</th>
-                            <th class="px-2 py-1.5">Tanggal</th>
-                            <th class="px-2 py-1.5">Jam</th>
-                            <th class="px-2 py-1.5">Ruang</th>
-                            <th class="px-2 py-1.5">Pemesan</th>
-                            <th class="px-2 py-1.5">Status</th>
-                            <th class="px-2 py-1.5 text-right">Biaya</th>
+                        <tr class="bg-slate-800 text-left text-white">
+                            <th class="px-2 py-1.5 font-semibold">No</th>
+                            <th class="px-2 py-1.5 font-semibold">Kode</th>
+                            <th class="px-2 py-1.5 font-semibold">Tanggal</th>
+                            <th class="px-2 py-1.5 font-semibold">Jam</th>
+                            <th class="px-2 py-1.5 font-semibold">Ruang</th>
+                            <th class="px-2 py-1.5 font-semibold">Pemesan</th>
+                            <th class="px-2 py-1.5 font-semibold">Status</th>
+                            <th class="px-2 py-1.5 font-semibold text-right">Biaya</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($bookings as $b)
-                            <tr class="break-inside-avoid border-b border-outline-variant/50 align-top">
+                            <tr class="break-inside-avoid border-b border-slate-300 align-top even:bg-slate-50">
                                 <td class="px-2 py-1.5">{{ $loop->iteration }}</td>
-                                <td class="px-2 py-1.5 font-mono font-semibold">{{ $b->code }}</td>
+                                <td class="whitespace-nowrap px-2 py-1.5 font-mono font-semibold">{{ $b->code }}</td>
                                 <td class="px-2 py-1.5">{{ $b->day_label }}</td>
                                 <td class="whitespace-nowrap px-2 py-1.5">
                                     {{ $b->time_range }}
-                                    <div class="text-on-surface-variant">{{ $b->duration_label }}</div>
+                                    <div class="text-slate-500">{{ $b->duration_label }}</div>
                                 </td>
                                 <td class="px-2 py-1.5">{{ $b->space?->name ?? '—' }}</td>
                                 <td class="px-2 py-1.5">
                                     {{ $b->user?->name ?? '—' }}
-                                    <div class="text-on-surface-variant">{{ $b->user?->email }}</div>
+                                    <div class="text-slate-500">{{ $b->user?->email }}</div>
                                 </td>
-                                <td class="px-2 py-1.5 font-semibold {{ $statusStyle[$b->status] ?? '' }}">{{ $statusLabels[$b->status] ?? $b->status }}</td>
-                                <td class="whitespace-nowrap px-2 py-1.5 text-right {{ $b->status === 'approved' ? '' : 'text-on-surface-variant' }}">{{ $rp($b->total_price) }}</td>
+                                <td class="px-2 py-1.5 font-medium {{ $statusStyle[$b->status] ?? '' }}">{{ $statusLabels[$b->status] ?? $b->status }}</td>
+                                <td class="whitespace-nowrap px-2 py-1.5 text-right {{ $b->status === 'approved' ? '' : 'text-slate-500' }}">{{ $rp($b->total_price) }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-2 py-8 text-center text-on-surface-variant">Tidak ada booking pada filter ini.</td>
+                                <td colspan="8" class="px-2 py-8 text-center text-slate-500">Tidak ada booking pada filter ini.</td>
                             </tr>
                         @endforelse
                     </tbody>
                     @if ($bookings->isNotEmpty())
                         <tfoot class="table-row-group">
-                            <tr class="border-t-2 border-on-surface font-semibold">
+                            <tr class="break-inside-avoid border-t-2 border-slate-800 bg-slate-100 font-semibold">
                                 <td colspan="7" class="px-2 py-2 text-right">Estimasi pendapatan (hanya booking disetujui)</td>
                                 <td class="whitespace-nowrap px-2 py-2 text-right">{{ $rp($summary['revenue']) }}</td>
                             </tr>
@@ -218,11 +264,35 @@
             </div>
         </section>
 
-        <footer class="mt-6 border-t border-outline-variant pt-3 text-body-sm text-on-surface-variant">
-            <p>Estimasi pendapatan dihitung dari durasi dikali tarif per jam ruang saat ini, dan hanya mencakup booking berstatus Disetujui.</p>
+        <div class="mt-4 space-y-1 text-body-sm text-slate-600">
+            <p>Catatan: estimasi pendapatan dihitung dari durasi dikali tarif per jam ruang saat ini, dan hanya mencakup booking berstatus Disetujui.</p>
             @if ($truncated)
-                <p class="mt-1 font-semibold text-amber-700">Hanya {{ number_format($limit, 0, ',', '.') }} booking pertama yang ditampilkan. Persempit filter untuk melihat sisanya.</p>
+                <p class="font-semibold text-amber-700">Hanya {{ number_format($limit, 0, ',', '.') }} booking pertama yang ditampilkan. Persempit filter untuk melihat sisanya.</p>
             @endif
+        </div>
+
+        <section class="mt-8 grid grid-cols-2 gap-10 break-inside-avoid text-center text-body-sm">
+            <div>
+                <div class="text-slate-600">Dibuat oleh,</div>
+                <div class="h-16"></div>
+                <div class="border-t border-slate-800 pt-1 font-semibold">{{ auth()->user()->name }}</div>
+                <div class="text-slate-600">Administrator SpaceHub</div>
+            </div>
+            <div>
+                <div class="text-slate-600">Disetujui oleh,</div>
+                <div class="h-16"></div>
+                <div class="border-t border-slate-800 pt-1 font-semibold">&nbsp;</div>
+                <div class="text-slate-600">Nama, jabatan, dan tanggal</div>
+            </div>
+        </section>
+
+            </td></tr></tbody>
+            <tfoot><tr><td></td></tr></tfoot>
+        </table>
+
+        <footer class="print-foot mt-6 flex items-center justify-between gap-4 border-t border-slate-400 pt-2 text-body-sm text-slate-500">
+            <span>Dokumen internal SpaceHub &middot; <span class="font-mono">{{ $docNo }}</span></span>
+            <span>{{ $period['label'] }}</span>
         </footer>
     </article>
 @endsection
