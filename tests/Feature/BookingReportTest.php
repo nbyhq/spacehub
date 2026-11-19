@@ -307,4 +307,16 @@ class BookingReportTest extends TestCase
             ->assertSee('<option value="pending" selected', false)
             ->assertSee('<option value="'.$space->id.'" selected', false);
     }
+
+    public function test_printed_sheet_has_repeating_header_and_footer_structure(): void
+    {
+        $this->actingAs($this->admin())
+            ->get(route('admin.reports.bookings'))
+            ->assertOk()
+            ->assertSee('class="print-head', false)
+            ->assertSee('class="print-foot', false)
+            ->assertSee('print-frame', false)
+            ->assertSee('@page', false)
+            ->assertSee('Halaman', false);
+    }
 }
