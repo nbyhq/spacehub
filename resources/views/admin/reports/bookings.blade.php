@@ -112,8 +112,8 @@
         $rate = $summary['total'] > 0 ? round($summary['approved'] / $summary['total'] * 100) : 0;
         $no = 0;
     @endphp
-    <article class="mx-auto max-w-[210mm] bg-white p-8 text-slate-900 shadow-sm print:max-w-none print:p-0 print:shadow-none">
-        <header class="print-head flex items-center justify-between gap-4 border-b-2 border-slate-900 pb-3">
+    <article data-laporan-responsif class="mx-auto max-w-[210mm] bg-white p-4 text-slate-900 sm:p-8 shadow-sm print:max-w-none print:p-0 print:shadow-none">
+        <header class="print-head flex items-center justify-between gap-4 border-b-2 border-slate-900 pb-3 max-sm:flex-col max-sm:items-start">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('images/logo.png') }}" alt="" class="size-11">
                 <div>
@@ -121,36 +121,36 @@
                     <div class="text-body-sm text-slate-600">Platform Pemesanan Ruang Kerja</div>
                 </div>
             </div>
-            <div class="text-right text-body-sm leading-snug text-slate-600">
+            <div class="text-right text-body-sm leading-snug text-slate-600 max-sm:text-left">
                 <div class="text-label-md font-semibold text-slate-900">Laporan Booking</div>
                 <div class="font-mono">{{ $docNo }}</div>
             </div>
         </header>
 
-        <table class="print-frame w-full">
+        <table class="print-frame w-full table-fixed">
             <thead><tr><td></td></tr></thead>
             <tbody><tr><td class="align-top">
 
         <h1 class="mt-1 text-center text-headline-md font-bold tracking-tight">Laporan Booking Ruang Kerja</h1>
 
-        <table class="mt-4 w-full border-collapse border border-slate-300 text-body-sm">
-            <tbody>
-                <tr class="border-b border-slate-300">
+        <table class="mt-4 w-full border-collapse border border-slate-300 text-body-sm max-sm:block">
+            <tbody class="max-sm:block">
+                <tr class="border-b border-slate-300 max-sm:grid max-sm:grid-cols-[7.5rem_1fr]">
                     <th class="w-28 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Nomor Dokumen</th>
                     <td class="px-2.5 py-1.5 font-mono">{{ $docNo }}</td>
-                    <th class="w-24 border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Ruang</th>
+                    <th class="w-24 border-l border-slate-300 bg-slate-100 max-sm:border-l-0 max-sm:border-t px-2.5 py-1.5 text-left font-semibold text-slate-700">Ruang</th>
                     <td class="px-2.5 py-1.5">{{ $space ? $space->name.($space->trashed() ? ' (dihapus)' : '') : 'Semua ruang' }}</td>
                 </tr>
-                <tr class="border-b border-slate-300">
+                <tr class="border-b border-slate-300 max-sm:grid max-sm:grid-cols-[7.5rem_1fr]">
                     <th class="bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Periode</th>
                     <td class="px-2.5 py-1.5">{{ $period['label'] }}</td>
-                    <th class="border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Status</th>
+                    <th class="border-l border-slate-300 bg-slate-100 max-sm:border-l-0 max-sm:border-t px-2.5 py-1.5 text-left font-semibold text-slate-700">Status</th>
                     <td class="px-2.5 py-1.5">{{ $status ? $statusLabels[$status] : 'Semua status' }}</td>
                 </tr>
-                <tr>
+                <tr class="max-sm:grid max-sm:grid-cols-[7.5rem_1fr]">
                     <th class="bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Tanggal Cetak</th>
                     <td class="px-2.5 py-1.5">{{ $printedAt }}</td>
-                    <th class="border-l border-slate-300 bg-slate-100 px-2.5 py-1.5 text-left font-semibold text-slate-700">Dicetak oleh</th>
+                    <th class="border-l border-slate-300 bg-slate-100 max-sm:border-l-0 max-sm:border-t px-2.5 py-1.5 text-left font-semibold text-slate-700">Dicetak oleh</th>
                     <td class="px-2.5 py-1.5">{{ auth()->user()->name }}</td>
                 </tr>
             </tbody>
@@ -163,7 +163,8 @@
                 dengan {{ $summary['approved'] }} disetujui ({{ $rate }}%), {{ $summary['pending'] }} menunggu persetujuan, dan {{ $summary['cancelled'] }} dibatalkan.
                 Estimasi pendapatan dari booking disetujui sebesar <strong>{{ $rp($summary['revenue']) }}</strong>.
             </p>
-            <table class="w-full border-collapse border border-slate-300 text-center text-body-sm">
+            <div class="overflow-x-auto print:overflow-visible">
+            <table class="w-full min-w-[34rem] border-collapse border border-slate-300 text-center text-body-sm print:min-w-0">
                 <thead>
                     <tr class="bg-slate-800 text-white">
                         <th class="border border-slate-700 px-2 py-1.5 font-semibold">Total Booking</th>
@@ -184,12 +185,14 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
         @if ($bySpace->count() > 1)
             <section class="mt-5">
                 <h2 class="mb-1.5 text-label-md font-bold">{{ ++$no }}. Rekap per Ruang</h2>
-                <table class="w-full border-collapse border border-slate-300 text-body-sm tabular-nums">
+                <div class="overflow-x-auto print:overflow-visible">
+                <table class="w-full min-w-[28rem] border-collapse border border-slate-300 text-body-sm tabular-nums print:min-w-0">
                     <thead class="table-header-group">
                         <tr class="bg-slate-800 text-left text-white">
                             <th class="px-2 py-1.5 font-semibold">Ruang</th>
@@ -209,6 +212,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
             </section>
         @endif
 
@@ -271,7 +275,7 @@
             @endif
         </div>
 
-        <section class="mt-8 grid grid-cols-2 gap-10 break-inside-avoid text-center text-body-sm">
+        <section class="mt-8 grid grid-cols-1 gap-6 break-inside-avoid sm:grid-cols-2 sm:gap-10 text-center text-body-sm">
             <div>
                 <div class="text-slate-600">Dibuat oleh,</div>
                 <div class="h-16"></div>
@@ -290,7 +294,7 @@
             <tfoot><tr><td></td></tr></tfoot>
         </table>
 
-        <footer class="print-foot mt-6 flex items-center justify-between gap-4 border-t border-slate-400 pt-2 text-body-sm text-slate-500">
+        <footer class="print-foot mt-6 flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start border-t border-slate-400 pt-2 text-body-sm text-slate-500">
             <span>Dokumen internal SpaceHub &middot; <span class="font-mono">{{ $docNo }}</span></span>
             <span>{{ $period['label'] }}</span>
         </footer>
