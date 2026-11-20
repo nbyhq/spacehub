@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Space;
 use App\Support\AvailabilityGrid;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -84,24 +85,37 @@ class BookingController extends Controller
         $data['start_time'] .= ':00';
         $data['end_time'] .= ':00';
 
-        $conflict = $space->bookings()
-            ->whereDate('booking_date', $data['booking_date'])
-            ->whereIn('status', ['pending', 'approved'])
-            ->where('start_time', '<', $data['end_time'])
-            ->where('end_time', '>', $data['start_time'])
-            ->exists();
+        // Cek bentrok dan simpan dalam SATU transaksi dengan baris ruang dikunci. Tanpa kunci, dua permintaan
+        // bersamaan sama-sama lolos cek lalu sama-sama tersimpan (booking ganda). Kunci HARUS menjadi
+        // pembacaan pertama di transaksi supaya cek di bawahnya melihat booking yang baru disimpan permintaan lain.
+        $saved = DB::transaction(function () use ($space, $data, $request) {
+            Space::whereKey($space->id)->lockForUpdate()->firstOrFail();
 
-        if ($conflict) {
+            $conflict = $space->bookings()
+                ->whereDate('booking_date', $data['booking_date'])
+                ->whereIn('status', ['pending', 'approved'])
+                ->where('start_time', '<', $data['end_time'])
+                ->where('end_time', '>', $data['start_time'])
+                ->exists();
+
+            if ($conflict) {
+                return false;
+            }
+
+            Booking::create($data + [
+                'user_id' => $request->user()->id,
+                'space_id' => $space->id,
+                'status' => 'pending',
+            ]);
+
+            return true;
+        }, 3);
+
+        if (! $saved) {
             return back()
                 ->withErrors(['start_time' => 'Jadwal bentrok dengan booking lain di ruang ini.'])
                 ->withInput();
         }
-
-        Booking::create($data + [
-            'user_id' => $request->user()->id,
-            'space_id' => $space->id,
-            'status' => 'pending',
-        ]);
 
         return redirect()->route('bookings.index')
             ->with('success', 'Booking dikirim dan menunggu persetujuan admin.');
