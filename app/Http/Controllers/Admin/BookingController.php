@@ -7,6 +7,7 @@ use App\Mail\BookingStatusChanged;
 use App\Models\Booking;
 use App\Models\Space;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
@@ -52,7 +53,37 @@ class BookingController extends Controller
         ]);
 
         $previous = $booking->status;
-        $booking->update($data);
+
+        // Menghidupkan kembali booking yang dibatalkan = menempati slot lagi. Slot itu mungkin sudah diambil orang lain,
+        // jadi cek bentrok dan ubah status dalam satu transaksi dengan baris ruang dikunci (sama seperti saat user memesan).
+        $activating = $previous === 'cancelled' && in_array($data['status'], ['pending', 'approved'], true);
+
+        if ($activating) {
+            $clash = DB::transaction(function () use ($booking, $data) {
+                Space::withTrashed()->whereKey($booking->space_id)->lockForUpdate()->firstOrFail();
+
+                $clash = Booking::where('space_id', $booking->space_id)
+                    ->whereKeyNot($booking->id)
+                    ->whereDate('booking_date', $booking->booking_date)
+                    ->whereIn('status', ['pending', 'approved'])
+                    ->where('start_time', '<', $booking->end_time)
+                    ->where('end_time', '>', $booking->start_time)
+                    ->with('user')
+                    ->first();
+
+                if (! $clash) {
+                    $booking->update($data);
+                }
+
+                return $clash;
+            }, 3);
+
+            if ($clash) {
+                return back()->with('error', "Tidak bisa mengaktifkan kembali: jadwalnya bentrok dengan booking {$clash->code} ({$clash->user?->name}). Batalkan booking itu dulu bila perlu.");
+            }
+        } else {
+            $booking->update($data);
+        }
 
         // Beri tahu pemesan hanya kalau statusnya benar-benar berubah menjadi disetujui atau dibatalkan.
         if ($previous !== $booking->status && in_array($booking->status, ['approved', 'cancelled'], true)) {
